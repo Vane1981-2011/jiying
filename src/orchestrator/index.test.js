@@ -20,10 +20,24 @@ const storeState = {
   setTotalSteps: vi.fn(),
   appendOutput: vi.fn(),
   setError: vi.fn(),
+  setResult: vi.fn(),
+  addTaskHistory: vi.fn(),
 };
 vi.mock('../store/agentStore', () => ({
   useAgentStore: {
     getState: () => storeState,
+    subscribe: vi.fn(() => () => {}),
+  },
+}));
+
+vi.mock('../store/userStore', () => ({
+  useUserStore: {
+    getState: () => ({
+      modelProvider: 'deepseek',
+      customBaseURL: '',
+      modelName: 'deepseek-chat',
+      uncomfortableMode: false,
+    }),
     subscribe: vi.fn(() => () => {}),
   },
 }));

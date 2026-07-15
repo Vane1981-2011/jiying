@@ -128,11 +128,11 @@ export default function Dashboard() {
       <div className="flex-1 overflow-y-auto px-10 py-12">
         {step === 1 && (
           <form onSubmit={handleGoalSubmit} className="max-w-2xl">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-              叩鸣·工坊
+            <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+              稽影
             </h1>
-            <p className="text-sm text-gray-400 mb-8">
-              AI Agent 编排工坊。下面是你的工作台。
+            <p className="text-xs text-gray-400 mb-6">
+              稽察审视，追影溯源 —— AI Agent 编排工坊。
             </p>
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -337,7 +337,7 @@ export default function Dashboard() {
             </div>
 
             <p className="text-xs text-gray-400 mt-6 leading-relaxed">
-              三条宪法不是你给 AI 的指令——是叩鸣帮你盯着的底线。AI 会在每个输出里声明自己是 AI（尊严），
+              三条宪法不是你给 AI 的指令——是稽影帮你盯着的底线。AI 会在每个输出里声明自己是 AI（尊严），
               你必须看到替代方案（自主），所有前提假设被标记出来等你审视（追问）。
               看到"自己做"按钮了吗？那是你的自主权的物理实现——任何时候都可以拿回来。
             </p>

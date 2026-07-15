@@ -1,9 +1,9 @@
 /**
- * 叩鸣·工坊 — 宪法规则引擎
+ * 稽影 — 宪法规则引擎
  *
  * 借鉴 OpenAI Codex execpolicy 的三态决策模式
  * Codex: command → execpolicy.check() → allow/prompt/forbidden
- * 叩鸣: agent_output → constitution.filter() → pass/warn/block
+ * 稽影: agent_output → constitution.filter() → pass/warn/block
  *
  * 这是产品第0层的物理实现。三条宪法（尊严/自主/追问）是不可拔插的系统底座，
  * 任何 Agent 的输出都必须经过此过滤器。

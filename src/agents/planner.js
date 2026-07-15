@@ -1,5 +1,5 @@
 /**
- * 叩鸣·工坊 — Planner Agent
+ * 稽影 — Planner Agent
  *
  * 接收用户意图，调用 AI API 拆解为子任务列表。
  * 支持 DeepSeek 和自定义 OpenAI 兼容端点。

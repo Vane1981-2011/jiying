@@ -1,5 +1,5 @@
 /**
- * 叩鸣·工坊 — 技能模板注册表（池子架构）
+ * 稽影 — 技能模板注册表（池子架构）
  *
  * 借鉴 OpenAI Codex 的 Skill 加载机制：
  * - 技能不绑定特定 Agent——Agent 启动时从池子中自选匹配项
@@ -88,7 +88,7 @@ export function matchSkills(agentRole, enabledSkillIds) {
 
 /**
  * 从 Codex 格式的 SKILL.md 文本导入技能
- * 解析 frontmatter (name, description) → 生成叩鸣 skill 对象
+ * 解析 frontmatter (name, description) → 生成稽影 skill 对象
  */
 export function importFromCodexSkill(markdownText) {
   const frontmatterMatch = markdownText.match(/^---\s*\n([\s\S]*?)\n---/);

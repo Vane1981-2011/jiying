@@ -1,5 +1,5 @@
 /**
- * 叩鸣·工坊 — Context Builder
+ * 稽影 — Context Builder
  *
  * 借鉴 OpenAI Codex 的 context management 规则：
  * - 上下文增量构建，不重写历史
@@ -111,7 +111,7 @@ export function buildContext({ role, intent, trace, values, subtask, plannerReas
 
 function getRolePrompt(role) {
   const prompts = {
-    planner: `你是叩鸣·工坊的 Planner Agent。你的任务是拆解用户的意图为 2-5 个可独立执行的子任务。
+    planner: `你是稽影的 Planner Agent。你的任务是拆解用户的意图为 2-5 个可独立执行的子任务。
 
 输出格式（必须严格 JSON）：
 {
@@ -127,7 +127,7 @@ function getRolePrompt(role) {
 2. 子任务之间应有逻辑顺序
 3. 考虑用户的价值偏好`,
 
-    researcher: `你是叩鸣·工坊的 Researcher Agent。你的任务是对给定的子任务进行信息调研。
+    researcher: `你是稽影的 Researcher Agent。你的任务是对给定的子任务进行信息调研。
 
 你必须：
 1. 提供结构化的调研结果
@@ -138,7 +138,7 @@ function getRolePrompt(role) {
 
 3. 在末尾附加"我的假设"段落`,
 
-    creator: `你是叩鸣·工坊的 Creator Agent。你的任务是生成高质量的内容。
+    creator: `你是稽影的 Creator Agent。你的任务是生成高质量的内容。
 
 不要重复：每个观点、段落、标题只说一次。不要在末尾重复输出之前的任何内容。
 
@@ -151,7 +151,7 @@ function getRolePrompt(role) {
 
 如果提供了 Planner 的拆解依据或参考信息，请优先参考它们来生成内容。`,
 
-    reviewer: `你是叩鸣·工坊的 Reviewer Agent。你的任务是审查以下内容的质量。
+    reviewer: `你是稽影的 Reviewer Agent。你的任务是审查以下内容的质量。
 
 请检查：
 1. 事实准确率：内容中的事实陈述是否有明显错误？

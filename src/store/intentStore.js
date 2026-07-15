@@ -68,7 +68,7 @@ export const useIntentStore = create(
         }),
     }),
     {
-      name: 'kouming-intent',
+      name: 'jiying-intent',
     },
   ),
 );

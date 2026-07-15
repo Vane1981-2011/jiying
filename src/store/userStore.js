@@ -75,7 +75,7 @@ export const useUserStore = create(
         })),
     }),
     {
-      name: 'kouming-user',
+      name: 'jiying-user',
       partialize: (state) => ({
         apiKey: state.apiKey,
         modelProvider: state.modelProvider,

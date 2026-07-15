@@ -151,8 +151,7 @@ export default function Settings() {
           </div>
           <button
             onClick={toggleShellEnabled}
-            disabled
-            className={`relative w-11 h-6 rounded-full transition-colors opacity-50 cursor-not-allowed ${
+            className={`relative w-11 h-6 rounded-full transition-colors ${
               shellEnabled ? 'bg-purple-600' : 'bg-gray-300'
             }`}
           >

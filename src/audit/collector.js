@@ -1,12 +1,12 @@
 /**
- * 叩鸣·工坊 — 代偿审计收集器
+ * 稽影 — 代偿审计收集器
  *
  * 收集用户行为数据用于代偿审计。所有数据仅存本地，绝不上传。
  *
  * 代偿审计的核心问题（王东岳）："你的 AI 越来越好了，你越来越不好了？"
  */
 
-const STORAGE_KEY = 'kouming-audit';
+const STORAGE_KEY = 'jiying-audit';
 const MAX_EVENTS = 1000;
 
 function loadEvents() {
@@ -138,7 +138,7 @@ function calculateQuestioningScore({ totalTraces, traceSkipped, reflectCount }) 
  * 当检测到系统在某维度快速改善时（如效率指标飙升），触发暂停，
  * 提示用户审视改善背后的数据变化。
  */
-const SPEED_BUMP_KEY = 'kouming-speed-bump';
+const SPEED_BUMP_KEY = 'jiying-speed-bump';
 
 export function checkSpeedBump(currentMetrics) {
   const history = JSON.parse(localStorage.getItem(SPEED_BUMP_KEY) || '[]');
@@ -174,7 +174,7 @@ export function checkSpeedBump(currentMetrics) {
  *
  * 每月生成一次，比较当前指标与上月的变化。
  */
-const AUDIT_REPORT_KEY = 'kouming-audit-reports';
+const AUDIT_REPORT_KEY = 'jiying-audit-reports';
 
 export function generatePeriodicReport() {
   const now = Date.now();
@@ -208,7 +208,7 @@ export function generatePeriodicReport() {
 }
 
 function countGoalRedefinitions() {
-  const events = JSON.parse(localStorage.getItem('kouming-audit') || '[]');
+  const events = JSON.parse(localStorage.getItem('jiying-audit') || '[]');
   return events.filter((e) => e.type === 'values_changed').length;
 }
 

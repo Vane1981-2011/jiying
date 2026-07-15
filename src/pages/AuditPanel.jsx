@@ -1,7 +1,7 @@
 import { AuditCollector, generatePeriodicReport } from '../audit/collector';
 import { useState, useEffect } from 'react';
 
-const REPORT_KEY = 'kouming-audit-reports';
+const REPORT_KEY = 'jiying-audit-reports';
 
 export default function AuditPanel() {
   const [report, setReport] = useState(null);

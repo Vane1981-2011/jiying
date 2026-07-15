@@ -1,0 +1,25 @@
+稽影 (Jiying)
+Copyright 2026 Vane1981-2011
+
+基于原始项目：
+  叩鸣·工坊 (Kouming Workshop)
+  Copyright 2026 叩鸣实验室 (zhizhi.ink)
+  https://github.com/qq12346/kouming
+  Apache License 2.0
+
+本产品包含以下第三方修改和新增内容（按时间顺序）：
+
+2026-07-15: v0.2.0 架构升级
+  - Shell 四级权限执行引擎 (src/agents/shellPolicy.js, executor.js)
+  - TF-IDF 向量检索知识库 RAG (src/knowledge/manager.js 重写)
+  - 并行 Creator 执行 + 完全断点恢复 (src/orchestrator/index.js 重写)
+  - 宪法规则增强：位置检测/结构化列表/段落长度 (src/constitution/rules.js)
+  - Self-Review 质量门禁：7项导出前预检 (src/quality/selfReview.js)
+  - Schema-First JSON 类型校验系统 (src/quality/schemas.js)
+  - M2 魔鬼代言人：10种偏见检测+假设挖掘+反证法 (src/quality/devilsAdvocate.js)
+  - C8 伦理放大效应：1000×放大+利害关系人+不可逆性 (src/quality/ethicsCheck.js)
+  - C9 系统自演化：Observe→Learn→Adapt→Evolve (src/quality/evolution.js)
+  - Fallback 链式容错：withFallback + withRetry + 指数退避 (src/utils/fallback.js)
+  - React 错误边界组件 (src/components/ErrorBoundary.jsx)
+  - 减速点检测 + UI 集成
+  - 测试覆盖：18文件/155测试（原始89测试 → 155测试）

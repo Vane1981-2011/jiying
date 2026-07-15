@@ -84,7 +84,7 @@ export const useAgentStore = create(
         }),
     })),
     {
-      name: 'kouming-agent-store',
+      name: 'jiying-agent-store',
       // 只持久化数据，不持久化函数
       partialize: (state) => ({
         agentOutputs: state.agentOutputs,

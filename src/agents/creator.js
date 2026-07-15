@@ -1,5 +1,5 @@
 /**
- * 叩鸣·工坊 — Creator Agent
+ * 稽影 — Creator Agent
  *
  * 接收子任务和上下文，调用 DeepSeek API 生成内容。
  * 自动在输出末尾附加"我的假设"段落。

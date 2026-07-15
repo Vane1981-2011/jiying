@@ -1,5 +1,5 @@
 /**
- * 叩鸣·工坊 — Researcher Agent
+ * 稽影 — Researcher Agent
  *
  * 信息调研 Agent。基于 DeepSeek 的训练数据和上下文进行调研，
  * 标注信息来源的信度等级（一手/二手/推断）。

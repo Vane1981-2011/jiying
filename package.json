@@ -1,9 +1,18 @@
 {
-  "name": "kouming-workshop",
-  "private": true,
+  "name": "jiying-workshop",
+  "private": false,
   "version": "0.2.0",
+  "description": "稽影 — AI Agent 编排工坊。稽察审视，追影溯源。界定每一次AI参与的价值边界。",
   "type": "module",
   "main": "electron/main.cjs",
+  "author": "Vane1981-2011",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/Vane1981-2011/jiying",
+  "bugs": "https://github.com/Vane1981-2011/jiying/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vane1981-2011/jiying.git"
+  },
   "scripts": {
     "dev": "vite",
     "dev:electron": "concurrently \"vite --port 5173\" \"wait-on http://localhost:5173 && electron .\"",
@@ -33,6 +42,7 @@
     "concurrently": "^9.2.0",
     "electron": "^33.4.11",
     "electron-builder": "^26.0.0",
+    "jsdom": "^29.1.1",
     "oxlint": "^1.71.0",
     "tailwindcss": "^4.1.0",
     "vite": "^8.1.1",
@@ -40,8 +50,8 @@
     "wait-on": "^8.0.0"
   },
   "build": {
-    "appId": "com.zhizhi.kouming",
-    "productName": "叩鸣·工坊",
+    "appId": "com.jiying.app",
+    "productName": "稽影",
     "directories": {
       "output": "release"
     },

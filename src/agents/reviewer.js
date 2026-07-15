@@ -1,5 +1,5 @@
 /**
- * 叩鸣·工坊 — Reviewer Agent
+ * 稽影 — Reviewer Agent
  *
  * 质量审查 Agent。审查 Creator 或其他 Agent 的输出。
  * 根据不舒服模式调整审查严格度——默认检查事实和逻辑，不舒服模式额外检查逻辑谬误和确认偏误。

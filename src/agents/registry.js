@@ -1,5 +1,5 @@
 /**
- * 叩鸣·工坊 — Agent 注册表
+ * 稽影 — Agent 注册表
  *
  * 借鉴 OpenAI Codex 的 plugin 注册模式。
  * 编排引擎通过注册表获取 Agent 定义，不关心 Agent 内部实现。

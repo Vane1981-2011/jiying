@@ -38,6 +38,6 @@ export const useSkillsStore = create(
       isInstalled: (skillId) => get().installed.includes(skillId),
       isEnabled: (skillId) => get().enabled.includes(skillId),
     }),
-    { name: 'kouming-skills' },
+    { name: 'jiying-skills' },
   ),
 );

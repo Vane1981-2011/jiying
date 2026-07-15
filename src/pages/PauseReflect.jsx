@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const STORAGE_KEY = 'kouming-reflect';
+const STORAGE_KEY = 'jiying-reflect';
 
 export default function PauseReflect() {
   const [text, setText] = useState('');

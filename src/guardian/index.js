@@ -1,5 +1,5 @@
 /**
- * 叩鸣·工坊 — 价值守护进程（完整版）
+ * 稽影 — 价值守护进程（完整版）
  *
  * 独立于编排引擎的后台监控。通过 Zustand subscribeWithSelector 只读订阅。
  * 五项监控：尊严红线 / 能力退化 / 想像力衰减 / 指标漂移 / 追问缺失
@@ -79,7 +79,7 @@ function notify(type, detail) {
 }
 
 // 指标漂移跟踪
-const DRIFT_KEY = 'kouming-metric-drift';
+const DRIFT_KEY = 'jiying-metric-drift';
 
 function trackMetricDrift(report) {
   const snapshots = JSON.parse(localStorage.getItem(DRIFT_KEY) || '[]');

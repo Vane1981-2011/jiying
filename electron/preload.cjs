@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('kouming', {
+contextBridge.exposeInMainWorld('__sibian', {
   platform: process.platform,
 
   /** 执行 Shell 命令 —— 经过权限策略引擎检查 */

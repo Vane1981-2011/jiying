@@ -1,5 +1,5 @@
 /**
- * 叩鸣·工坊 — Shell 权限策略引擎
+ * 稽影 — Shell 权限策略引擎
  *
  * 借鉴 OpenAI Codex execpolicy 的四级权限模型：
  *   allow → 自动执行（完全访问 + 白名单）
@@ -81,7 +81,7 @@ const POLICIES = [
     decision: 'forbidden',
     fullAccessDecision: 'forbidden',
     risk: 'high',
-    justification: '破坏性操作——不可逆的数据损失风险。此命令在叩鸣中永久禁止。',
+    justification: '破坏性操作——不可逆的数据损失风险。此命令在稽影中永久禁止。',
   },
 ];
 

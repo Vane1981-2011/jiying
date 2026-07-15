@@ -4,10 +4,12 @@ import { useIntentStore } from '../store/intentStore';
 import { useAgentStore } from '../store/agentStore';
 import { useGuardianStore } from '../store/guardianStore';
 import { useUserStore } from '../store/userStore';
-import { AuditCollector } from '../audit/collector';
+import { AuditCollector, checkSpeedBump } from '../audit/collector';
 import { orchestrate, improveIteration } from '../orchestrator';
 import Markdown from '../components/Markdown';
 import { buildMarkdownExport, downloadMarkdown } from '../utils/export';
+import { challenge } from '../quality/devilsAdvocate';
+import { ethicsAmplificationCheck } from '../quality/ethicsCheck';
 
 const VALUE_LABELS = {
   speed: { speed: '快速', accuracy: '准确', depth: '深度' },
@@ -35,6 +37,11 @@ export default function AssemblyLine() {
   const [error, setError] = useState(storeError);
   const [iterations, setIterations] = useState([]); // Reflexion 多轮改进结果
   const [improving, setImproving] = useState(false);
+  const [speedBump, setSpeedBump] = useState(null);
+  const [devilResult, setDevilResult] = useState(null);
+  const [ethicsResult, setEthicsResult] = useState(null);
+  const [exportQuality, setExportQuality] = useState(null);
+  const [qualityExpanded, setQualityExpanded] = useState(false);
 
   const updateSkipSteps = (s) => { storeSkips(Array.from(s)); };
   const updateUserEdits = (e) => { storeEdits(e); setLocalEdits(e); };
@@ -68,6 +75,9 @@ export default function AssemblyLine() {
         savedResult: resume ? result : null,
       });
       updateResult(r);
+      // 减速点检测：完成任务后检查效率是否过快改善
+      const bump = checkSpeedBump({ totalTasks: 1 });
+      if (bump) setSpeedBump(bump);
     } catch (e) { updateError(e.message); }
   }, [apiKey, intent, trace, values, skipSteps, userEdits, result]);
 
@@ -248,6 +258,49 @@ export default function AssemblyLine() {
                     {improving ? '改进中...' : `根据反馈改进 (${5 - iterations.length}/5)`}
                   </button>
                 )}
+
+                {/* M2 魔鬼代言人挑战 */}
+                {!devilResult && (
+                  <button onClick={() => {
+                    const combined = (result.creatorResults || [])
+                      .filter((r) => r.content)
+                      .map((r) => r.content)
+                      .join('\n');
+                    const d = challenge({
+                      content: combined || intent.goal,
+                      context: intent.goal,
+                      mode: 'quick',
+                    });
+                    setDevilResult(d);
+                  }}
+                    className="mt-2 w-full px-4 py-2 text-xs bg-orange-50 text-orange-700 rounded-lg
+                               border border-orange-200 hover:bg-orange-100 transition-colors">
+                    🗣 魔鬼代言人挑战 —— 找找漏洞
+                  </button>
+                )}
+                {devilResult && (
+                  <div className="mt-2 p-3 rounded-lg text-xs border border-orange-200 bg-orange-50">
+                    <div className="font-medium text-orange-800 mb-1">
+                      🗣 魔鬼代言人 · 置信度 {devilResult.overallConfidence}/5
+                    </div>
+                    {devilResult.hiddenAssumptions.length > 0 && (
+                      <div className="mt-1">
+                        <div className="text-orange-700 font-medium">隐含假设：</div>
+                        {devilResult.hiddenAssumptions.slice(0, 3).map((a, i) => (
+                          <div key={i} className="text-orange-600 ml-2">· {a.assumption}</div>
+                        ))}
+                      </div>
+                    )}
+                    {devilResult.biasesDetected.length > 0 && (
+                      <div className="mt-1">
+                        <div className="text-red-700 font-medium">检测到的偏见：</div>
+                        {devilResult.biasesDetected.map((b, i) => (
+                          <div key={i} className="text-red-600 ml-2">· {b.bias?.name}: {b.evidence}</div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -269,27 +322,65 @@ export default function AssemblyLine() {
               </div>
             ))}
 
-            {/* Export */}
+            {/* Speed bump card */}
+            {speedBump && (
+              <div className="p-4 rounded-xl bg-blue-50 border border-blue-200">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-medium text-blue-800">⚠ 停下来看一看</span>
+                </div>
+                <div className="text-xs text-blue-700 leading-relaxed">{speedBump.message}</div>
+              </div>
+            )}
+
+            {/* Export + Quality Gate */}
             {result?.creatorResults?.length > 0 && (
-              <button
-                onClick={() => {
-                  const md = buildMarkdownExport({
-                    goal: intent.goal,
-                    background: intent.background,
-                    plan: result.plan,
-                    creatorResults: result.creatorResults,
-                    review: result.review,
-                  });
-                  downloadMarkdown(md, intent.goal);
-                }}
-                className="w-full px-4 py-3 bg-purple-600 text-white text-sm rounded-xl
-                           hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-                导出 Markdown
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    const result2 = buildMarkdownExport({
+                      goal: intent.goal,
+                      background: intent.background,
+                      plan: result.plan,
+                      creatorResults: result.creatorResults,
+                      review: result.review,
+                    });
+                    const qualityReport = downloadMarkdown(result2, intent.goal);
+                    if (qualityReport) setExportQuality(qualityReport);
+                  }}
+                  className="w-full px-4 py-3 bg-purple-600 text-white text-sm rounded-xl
+                             hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  导出 Markdown
+                </button>
+
+                {/* 质量门禁报告 */}
+                {exportQuality && (
+                  <div className="p-3 rounded-lg text-xs border"
+                    style={{ borderColor: exportQuality.passed ? '#86EFAC' : '#FCA5A5', background: exportQuality.passed ? '#F0FDF4' : '#FEF2F2' }}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium" style={{ color: exportQuality.passed ? '#166534' : '#991B1B' }}>
+                        {exportQuality.passed ? '✅ 质量检查通过' : '⚠ 质量检查有警告'}
+                      </span>
+                      <button onClick={() => setQualityExpanded(!qualityExpanded)}
+                        className="text-gray-400 hover:text-gray-600 text-[10px]">
+                        {qualityExpanded ? '收起' : '详情'}
+                      </button>
+                    </div>
+                    {exportQuality.criticalCount > 0 && (
+                      <div className="text-red-700">🔴 {exportQuality.criticalCount} 个 critical 问题</div>
+                    )}
+                    {exportQuality.warningCount > 0 && (
+                      <div className="text-amber-700">🟡 {exportQuality.warningCount} 个 warning</div>
+                    )}
+                    {qualityExpanded && exportQuality.results.filter((r) => r.severity !== 'info').map((r, i) => (
+                      <div key={i} className="mt-1 text-gray-600">· {r.issue}</div>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
 
           </div>
@@ -339,6 +430,67 @@ export default function AssemblyLine() {
               </div>
             )}
           </div>
+
+          {/* C8 伦理放大效应 */}
+          {result && !ethicsResult && (
+            <div className="pt-4 border-t border-gray-100">
+              <button onClick={() => {
+                const combined = (result.creatorResults || [])
+                  .filter((r) => r.content).map((r) => r.content).join('\n');
+                setEthicsResult(ethicsAmplificationCheck({
+                  content: combined || intent.goal,
+                  goal: intent.goal,
+                }));
+              }}
+                className="w-full px-3 py-2 text-xs bg-gray-50 text-gray-600 rounded-lg
+                           border border-gray-200 hover:bg-gray-100 transition-colors">
+                🛡 伦理放大效应检查
+              </button>
+            </div>
+          )}
+          {ethicsResult && (
+            <div className="pt-4 border-t border-gray-100">
+              <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">伦理检查</h3>
+              <div className={`p-3 rounded-lg text-xs ${
+                ethicsResult.verdict === 'block' ? 'bg-red-50 border border-red-200' :
+                ethicsResult.verdict === 'caution' ? 'bg-amber-50 border border-amber-200' :
+                'bg-green-50 border border-green-200'
+              }`}>
+                <div className="font-medium mb-1">
+                  {ethicsResult.verdict === 'block' ? '🔴 建议阻断' :
+                   ethicsResult.verdict === 'caution' ? '🟡 需要警惕' :
+                   '🟢 通过'}
+                </div>
+                {ethicsResult.amplificationRisks.length > 0 && (
+                  <div className="space-y-1 mt-1">
+                    {ethicsResult.amplificationRisks.slice(0, 2).map((r, i) => (
+                      <div key={i} className={r.level === 'critical' ? 'text-red-600' : 'text-amber-600'}>
+                        {r.level === 'critical' ? '🔴' : '🟡'} {r.issue}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Speed bump warning */}
+          {speedBump && (
+            <div className="pt-4 border-t border-gray-100">
+              <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">减速提醒</h3>
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-medium text-blue-800">⚠ 减速点触发</span>
+                </div>
+                <div className="text-xs text-blue-700 leading-relaxed">
+                  {speedBump.message}
+                </div>
+                <div className="mt-2 text-[10px] text-blue-500">
+                  之前平均 {speedBump.previousAvg} 个 → 现在 {speedBump.currentAvg} 个
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Guardian alerts */}
           {guardianAlerts.length > 0 && (
@@ -415,8 +567,8 @@ function AgentCard({ agent, output, status, subtaskId }) {
 function CreatorContent({ content }) {
   if (!content) return <div className="text-sm text-gray-400">(AI 未生成内容)</div>;
 
-  // 匹配声明：从"叩鸣·工坊 ... Agent"到第一个 --- 或 ## 标题
-  const declMatch = content.match(/叩鸣[·.]?工坊[\s\S]*?(?:Creator|Planner|Researcher|Reviewer)\s*Agent[\s\S]*?(?=\n---|\n##\s)/i);
+  // 匹配声明：从"稽影 ... Agent"到第一个 --- 或 ## 标题
+  const declMatch = content.match(/稽影[·.]?工坊[\s\S]*?(?:Creator|Planner|Researcher|Reviewer)\s*Agent[\s\S]*?(?=\n---|\n##\s)/i);
   if (!declMatch) {
     return <Markdown className="text-sm text-gray-700 leading-relaxed" text={content} />;
   }
