@@ -27,7 +27,10 @@
   "dependencies": {
     "@ai-sdk/deepseek": "^3.0.7",
     "@ai-sdk/openai": "^4.0.11",
+    "@noble/ed25519": "^3.1.0",
     "ai": "^7.0.22",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router": "^7.5.0",
