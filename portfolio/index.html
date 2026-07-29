@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>稽影系列 · 参赛作品集 | Jiying Portfolio</title>
+<meta name="description" content="稽影系列 — 信任即产品。多Agent知识工作编排系统，宪法即代码，可验证的AI信任基础设施。开源 Apache 2.0。">
+<meta property="og:title" content="稽影系列 · 参赛作品集">
+<meta property="og:description" content="稽察审视，追影溯源 — 让每一次AI执行都变得可验证。">
+<meta property="og:type" content="website">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card-hover: #273548;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --border: #334155;
+  --gold: #f59e0b;
+  --gold-bg: rgba(245,158,11,0.1);
+  --silver: #94a3b8;
+  --silver-bg: rgba(148,163,184,0.08);
+  --bronze: #d97706;
+  --indigo: #6366f1;
+  --indigo-bg: rgba(99,102,241,0.1);
+  --red: #ef4444;
+  --green: #22c55e;
+  --radius: 14px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Inter', 'PingFang SC', -apple-system, sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(165deg, #0b1120 0%, #1a1545 30%, #2d1b69 55%, #312e81 75%, #1e1b4b 100%);
+  position: relative; overflow: hidden;
+  padding: 110px 20px 130px;
+  text-align: center;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: 
+    radial-gradient(ellipse at 25% 20%, rgba(99,102,241,0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 75%, rgba(245,158,11,0.12) 0%, transparent 45%),
+    radial-gradient(ellipse at 60% 40%, rgba(139,92,246,0.08) 0%, transparent 60%);
+  animation: heroShimmer 12s ease-in-out infinite alternate;
+}
+.hero::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.4;
+  mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 70%);
+}
+@keyframes heroShimmer { 0%{transform:translate(0,0)} 100%{transform:translate(2%,1%)} }
+.hero-content { position:relative; z-index:1; max-width:900px; margin:0 auto; }
+
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(99,102,241,0.2); border:1px solid rgba(99,102,241,0.3);
+  padding:8px 22px; border-radius:99px;
+  font-size:13px; font-weight:600; letter-spacing:0.06em; margin-bottom:24px;
+  backdrop-filter:blur(8px);
+}
+.hero-badge .dot { width:8px; height:8px; border-radius:50%; background:var(--gold); animation:pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.hero h1 { font-size:clamp(36px,6vw,60px); font-weight:900; letter-spacing:-0.02em; line-height:1.1; margin-bottom:16px; }
+.hero h1 .accent { background:linear-gradient(135deg, #f59e0b, #fbbf24); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero .tagline { font-size:17px; opacity:0.7; max-width:600px; margin:0 auto 32px; line-height:1.65; }
+.hero .motto { font-size:15px; color:var(--gold); font-weight:600; margin-bottom:40px; letter-spacing:0.08em; }
+
+.hero-stats { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
+.hero-stat {
+  background:rgba(255,255,255,0.06); backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.1); border-radius:14px;
+  padding:18px 24px; min-width:110px; text-align:center;
+  transition:transform 0.2s, background 0.2s;
+}
+.hero-stat:hover { transform:translateY(-3px); background:rgba(255,255,255,0.1); }
+.hero-stat .num { font-size:28px; font-weight:900; }
+.hero-stat .num.gold { color:var(--gold); }
+.hero-stat .lbl { font-size:12px; opacity:0.6; margin-top:4px; }
+
+/* ── Nav ── */
+.nav-bar {
+  position:sticky; top:0; z-index:100;
+  background:rgba(15,23,42,0.88); backdrop-filter:blur(16px) saturate(180%);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  padding:0 20px; height:54px;
+}
+.nav-tab {
+  padding:8px 16px; border-radius:99px; font-size:13px; font-weight:600;
+  cursor:pointer; border:none; background:transparent; color:var(--muted);
+  transition:all 0.2s; white-space:nowrap;
+}
+.nav-tab:hover { background:rgba(255,255,255,0.06); color:var(--text); }
+.nav-tab.active { background:var(--indigo); color:#fff; }
+.nav-brand { font-family:'Brush Script MT',cursive; font-size:18px; color:rgba(255,255,255,0.5); margin-right:auto; }
+
+/* ── Main ── */
+.main { max-width:1120px; margin:-50px auto 0; padding:0 24px 80px; position:relative; z-index:2; }
+
+.section-title { text-align:center; margin:60px 0 28px; position:relative; }
+.section-title::after {
+  content:''; display:block; width:48px; height:2px;
+  background:linear-gradient(90deg, transparent, var(--indigo), transparent);
+  margin:16px auto 0; border-radius:1px;
+}
+.section-title h2 { font-size:26px; font-weight:800; letter-spacing:-0.01em; }
+.section-title h2 span { color:var(--indigo); }
+.section-title p { font-size:14px; color:var(--muted); margin-top:6px; }
+
+/* ── Cards ── */
+.card {
+  background:var(--card); border-radius:var(--radius);
+  border:1px solid var(--border);
+  transition:border-color 0.35s, box-shadow 0.35s, transform 0.25s;
+}
+.card:hover { 
+  border-color:rgba(99,102,241,0.5); 
+  box-shadow:0 0 0 1px rgba(99,102,241,0.15), 0 12px 40px rgba(0,0,0,0.4);
+  transform:translateY(-3px);
+}
+.card-body { padding:24px; }
+
+/* ── Works Grid ── */
+.works-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
+
+.work-card { padding:28px; position:relative; overflow:hidden; }
+.work-card.gold { 
+  border-color:rgba(245,158,11,0.45); 
+  background:linear-gradient(135deg, rgba(245,158,11,0.06), var(--card) 40%);
+  box-shadow:0 0 0 1px rgba(245,158,11,0.1), 0 4px 24px rgba(0,0,0,0.3);
+}
+.work-card.gold::before {
+  content:''; position:absolute; left:0; top:12%; height:76%; width:3px;
+  background:linear-gradient(to bottom, transparent, var(--gold), var(--gold), transparent);
+  border-radius:0 2px 2px 0;
+}
+.work-card.gold:hover { border-color:rgba(245,158,11,0.7); box-shadow:0 0 24px rgba(245,158,11,0.12), 0 12px 40px rgba(0,0,0,0.4); }
+.work-card .tier-badge {
+  position:absolute; top:16px; right:16px;
+  padding:5px 16px; border-radius:99px;
+  font-size:12px; font-weight:800; letter-spacing:0.06em;
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.work-card .tier-badge.gold { 
+  background:rgba(245,158,11,0.18); color:var(--gold); 
+  border:1px solid rgba(245,158,11,0.3);
+  box-shadow:0 0 12px rgba(245,158,11,0.08);
+}
+.work-card .tier-badge.silver { 
+  background:rgba(148,163,184,0.12); color:var(--silver); 
+  border:1px solid rgba(148,163,184,0.2);
+}
+.work-card .tier-badge.bronze { 
+  background:rgba(217,119,6,0.12); color:var(--bronze); 
+  border:1px solid rgba(217,119,6,0.2);
+}
+.work-card:hover .tier-badge { transform:scale(1.05); }
+.work-card .work-icon { font-size:32px; margin-bottom:14px; }
+.work-card h3 { font-size:18px; font-weight:700; margin-bottom:6px; }
+.work-card .work-sub { font-size:12px; color:var(--muted); margin-bottom:12px; }
+.work-card .work-desc { font-size:13px; color:var(--muted); line-height:1.7; margin-bottom:14px; }
+
+.tag-row { display:flex; flex-wrap:wrap; gap:6px; }
+.tag { padding:4px 12px; border-radius:99px; font-size:10px; font-weight:600; }
+.tag.indigo { background:var(--indigo-bg); color:var(--indigo); }
+.tag.gold { background:var(--gold-bg); color:var(--gold); }
+.tag.green { background:rgba(34,197,94,0.1); color:var(--green); }
+
+/* ── Feature Highlights ── */
+.features-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:14px; margin-bottom:24px; }
+.feature-card { padding:22px; position:relative; }
+.feature-card .novelty {
+  position:absolute; top:12px; right:12px;
+  font-size:10px; font-weight:800; padding:3px 12px; border-radius:99px;
+  background:rgba(245,158,11,0.18); color:var(--gold);
+  border:1px solid rgba(245,158,11,0.25);
+  transition:box-shadow 0.3s;
+}
+.feature-card:hover .novelty { box-shadow:0 0 16px rgba(245,158,11,0.15); }
+.feature-card .feat-icon { font-size:26px; margin-bottom:10px; }
+.feature-card h4 { font-size:15px; font-weight:700; margin-bottom:6px; }
+.feature-card p { font-size:12px; color:var(--muted); line-height:1.6; }
+
+/* ── Pipeline ── */
+.pipeline-flow { display:flex; gap:0; overflow-x:auto; padding:4px 0; }
+.pipeline-step {
+  flex:1; min-width:100px; text-align:center;
+  padding:16px 8px; border-radius:12px; background:rgba(255,255,255,0.03);
+  border:1px solid var(--border); transition:transform 0.2s, border-color 0.2s;
+  position:relative;
+}
+.pipeline-step + .pipeline-step { margin-left:10px; }
+.pipeline-step + .pipeline-step::after {
+  content:'→'; position:absolute; left:-14px; top:50%; transform:translateY(-50%);
+  color:var(--indigo); font-size:16px; font-weight:300; opacity:0.5;
+}
+.pipeline-step:hover { transform:translateY(-3px); border-color:var(--indigo); }
+.pipeline-step .step-num {
+  width:36px; height:36px; border-radius:50%;
+  background:rgba(99,102,241,0.15); color:var(--indigo);
+  margin:0 auto 10px; display:flex; align-items:center; justify-content:center;
+  font-size:16px; font-weight:800;
+}
+.pipeline-step .step-name { font-size:13px; font-weight:700; margin-bottom:3px; }
+.pipeline-step .step-tau { font-size:10px; opacity:0.4; }
+
+/* ── Skill Showcase ── */
+.skill-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:12px; margin-bottom:24px; }
+.skill-card { padding:18px; position:relative; transition:border-color 0.3s, box-shadow 0.3s, transform 0.2s; }
+.skill-card:hover { transform:translateY(-2px); border-color:rgba(99,102,241,0.5); box-shadow:0 8px 28px rgba(0,0,0,0.35); }
+.skill-card .skill-tier {
+  position:absolute; top:10px; right:10px;
+  width:8px; height:8px; border-radius:50%;
+}
+.skill-card .skill-tier.gold-dot { background:var(--gold); box-shadow:0 0 10px rgba(245,158,11,0.6), 0 0 2px rgba(245,158,11,0.3); }
+.skill-card .skill-tier.silver-dot { background:var(--silver); box-shadow:0 0 6px rgba(148,163,184,0.3); }
+.skill-card .skill-tier.bronze-dot { background:var(--bronze); box-shadow:0 0 4px rgba(217,119,6,0.2); }
+.skill-card .skill-name { font-size:14px; font-weight:700; margin-bottom:4px; padding-right:16px; }
+.skill-card .skill-cat { font-size:10px; color:var(--indigo); font-weight:600; margin-bottom:6px; }
+.skill-card .skill-desc { font-size:11px; color:var(--muted); line-height:1.5; }
+
+/* ── Constitution ── */
+.constitution-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:24px; }
+.const-card { padding:22px 20px; text-align:center; position:relative; }
+.const-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  border-radius:var(--radius) var(--radius) 0 0;
+}
+.const-card:nth-child(1)::before { background:linear-gradient(90deg, transparent, var(--red), transparent); }
+.const-card:nth-child(2)::before { background:linear-gradient(90deg, transparent, var(--gold), transparent); }
+.const-card:nth-child(3)::before { background:linear-gradient(90deg, transparent, var(--indigo), transparent); }
+.const-card .const-icon { font-size:28px; margin-bottom:10px; }
+.const-card h4 { font-size:15px; font-weight:700; margin-bottom:4px; }
+.const-card .const-phil { font-size:11px; color:var(--gold); margin-bottom:6px; }
+.const-card .const-rule { font-size:12px; color:var(--muted); line-height:1.5; }
+
+/* ── Quality Gates ── */
+.gate-list { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.gate-item {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 12px; border-radius:8px;
+  background:rgba(255,255,255,0.02); border:1px solid var(--border);
+  font-size:11px;
+}
+.gate-item .gate-num { font-weight:800; font-size:13px; flex-shrink:0; }
+.gate-item .gate-sev { font-size:9px; padding:2px 8px; border-radius:99px; font-weight:600; }
+.gate-item .gate-sev.block { background:rgba(239,68,68,0.15); color:var(--red); }
+.gate-item .gate-sev.warn { background:rgba(245,158,11,0.12); color:var(--gold); }
+
+/* ── Phase Timeline ── */
+.phase-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+.phase-card { padding:22px 14px; text-align:center; position:relative; }
+.phase-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  border-radius:var(--radius) var(--radius) 0 0;
+}
+.phase-card:nth-child(1)::before { background:linear-gradient(90deg, transparent, var(--silver), transparent); }
+.phase-card:nth-child(2)::before { background:linear-gradient(90deg, transparent, var(--indigo), transparent); }
+.phase-card:nth-child(3)::before { background:linear-gradient(90deg, transparent, var(--gold), transparent); }
+.phase-card:nth-child(4)::before { background:linear-gradient(90deg, transparent, var(--green), transparent); }
+.phase-card .phase-num { font-size:28px; font-weight:900; margin-bottom:6px; }
+.phase-card .phase-name { font-size:14px; font-weight:700; margin-bottom:4px; }
+.phase-card .phase-desc { font-size:11px; color:var(--muted); line-height:1.5; }
+
+/* ── CTA ── */
+.cta-section {
+  background:linear-gradient(145deg, #1a1545 0%, #2d1b69 40%, #312e81 100%);
+  border-radius:var(--radius); padding:44px 36px; text-align:center;
+  margin-bottom:24px; border:1px solid rgba(99,102,241,0.35);
+  box-shadow:0 0 40px rgba(99,102,241,0.08);
+  position:relative; overflow:hidden;
+}
+.cta-section::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 30% 50%, rgba(245,158,11,0.06) 0%, transparent 60%);
+}
+.cta-section h3 { font-size:22px; font-weight:800; margin-bottom:8px; }
+.cta-section p { font-size:14px; opacity:0.7; margin-bottom:24px; line-height:1.6; }
+.cta-links { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.cta-btn {
+  padding:12px 28px; border-radius:99px; font-size:14px; font-weight:700;
+  text-decoration:none; transition:transform 0.2s, box-shadow 0.2s;
+  display:inline-flex; align-items:center; gap:6px;
+}
+.cta-btn:hover { transform:translateY(-2px); }
+.cta-btn.primary { background:var(--gold); color:#0f172a; box-shadow:0 4px 20px rgba(245,158,11,0.25); }
+.cta-btn.primary:hover { box-shadow:0 6px 28px rgba(245,158,11,0.35); }
+.cta-btn.secondary { background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.15); }
+
+/* ── Footer ── */
+.footer {
+  text-align:center; padding:20px 0 60px;
+  font-size:12px; color:var(--muted);
+  display:flex; justify-content:space-between; align-items:flex-end;
+}
+.footer-logo { font-family:'Brush Script MT',cursive; font-size:20px; color:rgba(38,56,42,0.6); }
+
+/* ── Back to Top ── */
+.back-to-top {
+  position:fixed; bottom:28px; right:28px; z-index:99;
+  width:44px; height:44px; border-radius:50%;
+  background:var(--indigo); color:#fff; border:none;
+  font-size:18px; cursor:pointer;
+  box-shadow:0 4px 16px rgba(99,102,241,0.35);
+  opacity:0; transform:translateY(12px);
+  transition:opacity 0.3s, transform 0.3s;
+  display:flex; align-items:center; justify-content:center;
+}
+.back-to-top.visible { opacity:1; transform:translateY(0); }
+
+/* ── Scroll Anim ── */
+.animate-on-scroll {
+  opacity:0; transform:translateY(20px);
+  transition:opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.animate-on-scroll.visible { opacity:1; transform:translateY(0); }
+
+@media (max-width:768px) {
+  .hero { padding:72px 16px 88px; }
+  .hero h1 { font-size:28px; }
+  .works-grid { grid-template-columns:1fr; }
+  .constitution-grid { grid-template-columns:1fr; }
+  .phase-grid { grid-template-columns:1fr 1fr; }
+  .gate-list { grid-template-columns:1fr; }
+  .skill-grid { grid-template-columns:1fr; }
+  .nav-bar { overflow-x:auto; justify-content:flex-start; padding:0 12px; }
+  .nav-brand { display:none; }
+  .features-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ HERO ═══════ -->
+<header class="hero" id="hero">
+  <div class="hero-content">
+    <div class="hero-badge"><span class="dot"></span>参赛作品集 · 稽影系列</div>
+    <h1>稽察审视 · <span class="accent">追影溯源</span></h1>
+    <p class="tagline">信任不是功能——<strong>信任是产品</strong>。每一次AI执行都可以且必须被证明是"有权、受控、可恢复、可验证、可追责"的。</p>
+    <p class="motto">—— 稽影系列 v0.2 · Apache 2.0 开源</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num gold">155</div><div class="lbl">🧪 通过测试</div></div>
+      <div class="hero-stat"><div class="num gold">6</div><div class="lbl">🤖 AI Agent</div></div>
+      <div class="hero-stat"><div class="num gold">91</div><div class="lbl">🧩 UZI金牌技能</div></div>
+      <div class="hero-stat"><div class="num">3</div><div class="lbl">📜 宪法规则</div></div>
+      <div class="hero-stat"><div class="num">7</div><div class="lbl">🛡 质量门禁</div></div>
+      <div class="hero-stat"><div class="num">14</div><div class="lbl">📄 模块文档</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════ NAV ═══════ -->
+<nav class="nav-bar">
+  <span class="nav-brand">MSxiaxia</span>
+  <button class="nav-tab active" data-section="hero">🏠 首页</button>
+  <button class="nav-tab" data-section="app">🔧 主应用</button>
+  <button class="nav-tab" data-section="skills">🧩 技能库</button>
+  <button class="nav-tab" data-section="learnings">📚 研究</button>
+  <button class="nav-tab" data-section="docs">📄 文档</button>
+</nav>
+
+<!-- ═══════ MAIN ═══════ -->
+<main class="main">
+
+<!-- Section: 稽影系列概览 -->
+<div class="section-title">
+  <h2>🏛 <span>稽影系列</span> · 四件作品</h2>
+  <p>从多Agent应用架构到技能生态系统，形成完整的方法论╳工程╳展示三层体系</p>
+</div>
+
+<div class="works-grid">
+
+  <!-- 作品1: 主应用 Gold -->
+  <div class="card work-card gold">
+    <span class="tier-badge gold">🥇 核心作品</span>
+    <div class="work-icon">🔧</div>
+    <h3>稽影 v0.2.0 · 多Agent工作台</h3>
+    <div class="work-sub">React 19 · Vite 8 · Electron · DeepSeek AI</div>
+    <p class="work-desc">
+      6-Agent编排系统（Planner→Researcher→Creator→Reviewer→Executor+ShellPolicy）。
+      宪法即代码：尊严(康德)·自主(马尔库塞)·追问(海德格尔)三条宪法规则自动阻断/警告。
+      TEP v1.0 可信执行协议——开放、可验证的Agent间信任标准。
+    </p>
+    <div class="tag-row">
+      <span class="tag gold">Apache 2.0</span>
+      <span class="tag indigo">GitHub开源</span>
+      <span class="tag green">155测试通过</span>
+      <span class="tag indigo">Electron桌面</span>
+    </div>
+  </div>
+
+  <!-- 作品2: 研究系列 Silver -->
+  <div class="card work-card">
+    <span class="tier-badge silver">🥈 方法论</span>
+    <div class="work-icon">📚</div>
+    <h3>稽影学习研究系列 · 四阶段进化</h3>
+    <div class="work-sub">认识→模仿→创新→超越 · 8份白皮书 · 3个Python工具</div>
+    <p class="work-desc">
+      从6个核心技能逆向提取17层统一架构；基因编译器将技能拆解为35个可重组基因片段；
+      3个自动化工具实现稽影增强质量门禁的全技能注入。代码重复率从35%降至<5%。
+    </p>
+    <div class="tag-row">
+      <span class="tag indigo">17层架构</span>
+      <span class="tag indigo">35基因池</span>
+      <span class="tag green">3工具链</span>
+    </div>
+  </div>
+
+  <!-- 作品3: 技能库 Bronze -->
+  <div class="card work-card">
+    <span class="tier-badge bronze">🥉 生态</span>
+    <div class="work-icon">🧩</div>
+    <h3>稽影技能库 · 91个UZI金牌技能</h3>
+    <div class="work-sub">6大分类 · 自发现生成器 · CodeBuddy市场</div>
+    <p class="work-desc">
+      覆盖开发工具(15)、商业运营(15)、投资理财(10)、效率工具(8)、内容创作(5)、教育学习(1)。
+      Python生成器自动扫描技能目录构建HTML展示页。所有技能通过稽影质量门禁五重检查。
+    </p>
+    <div class="tag-row">
+      <span class="tag gold">91技能</span>
+      <span class="tag indigo">6分类</span>
+      <span class="tag green">全UZI金牌</span>
+    </div>
+  </div>
+
+  <!-- 作品4: 文档 -->
+  <div class="card work-card">
+    <span class="tier-badge bronze">📄 基础设施</span>
+    <div class="work-icon">📋</div>
+    <h3>稽影模块文档 · 14份结构化参考</h3>
+    <div class="work-sub">从App入口到工具函数 · 完整覆盖</div>
+    <p class="work-desc">
+      统一模板：模块名称→功能用途→输入输出参数→依赖关系→注意事项。
+      覆盖Agent系统、编排引擎、宪法系统、质量系统、守护进程、知识库、审计系统等全部模块。
+    </p>
+    <div class="tag-row">
+      <span class="tag indigo">14文档</span>
+      <span class="tag green">统一模板</span>
+      <span class="tag indigo">可追溯</span>
+    </div>
+  </div>
+</div>
+
+<!-- Section: 核心创新亮点 -->
+<div class="section-title" id="app">
+  <h2>💎 <span>核心</span>创新亮点</h2>
+  <p>稽影 v0.2.0 中超越原始 Kouming Workshop 的 7 项架构级创新</p>
+</div>
+
+<div class="features-grid">
+
+  <div class="card feature-card">
+    <span class="novelty">🥇 独创</span>
+    <div class="feat-icon">📜</div>
+    <h4>宪法即代码</h4>
+    <p>尊严(block)·自主(warn)·追问(warn)——三条宪法规则从哲学原则直接编译为可执行函数。输出未声明AI身份则自动阻断+追加标记。v0.2升级三态检测替代简单关键词。</p>
+  </div>
+
+  <div class="card feature-card">
+    <span class="novelty">🥇 独创</span>
+    <div class="feat-icon">📋</div>
+    <h4>TEP v1.0 可信执行协议</h4>
+    <p>开放协议的JSON Schema + TypeScript接口：8组件信封(任务·授权·执行档案·策略决策·行动收据·证据包·质量证明·审计签名)。跨Agent信任验证标准。</p>
+  </div>
+
+  <div class="card feature-card">
+    <span class="novelty">🥈 首创</span>
+    <div class="feat-icon">🛡️</div>
+    <h4>7项预检门禁</h4>
+    <p>对标Hermes：宪法状态→Agent参与→覆盖率≥60%→占位符检测→评分≥3→假设完整→去重(Jaccard>85%)。每项独立返回evidence+suggestedFix。</p>
+  </div>
+
+  <div class="card feature-card">
+    <span class="novelty">🥈 首创</span>
+    <div class="feat-icon">🧠</div>
+    <h4>10种认知偏见检测</h4>
+    <p>魔鬼代言人：确认偏误→锚定效应→可得性→框架效应→过度自信→群体思维→沉没成本→近期偏差→归因错误→现状偏误。反事实推理(reductio ad absurdum)。</p>
+  </div>
+
+  <div class="card feature-card">
+    <span class="novelty">🥈 首创</span>
+    <div class="feat-icon">📊</div>
+    <h4>不确定性预算</h4>
+    <p>6源加权追踪(数据·模型·知识·假设·推理·环境) + 3级阈值(LOW/MEDIUM/HIGH) + 对应行动(验证/复审/拒绝)。模糊概念量化为可操作指标。</p>
+  </div>
+
+  <div class="card feature-card">
+    <span class="novelty">🥉 创新</span>
+    <div class="feat-icon">🔄</div>
+    <h4>断点恢复+侧效应感知重试</h4>
+    <p>每步Agent完成后立即持久化，刷新页面自动接续。DomainError 11分类 + sideEffectStatus枚举 + 指数退避+jitter。TIMEOUT/RATE_LIMIT/CONFLICT白名单重试。</p>
+  </div>
+
+  <div class="card feature-card">
+    <span class="novelty">🥉 创新</span>
+    <div class="feat-icon">🦾</div>
+    <h4>Observe→Learn→Adapt→Evolve闭环</h4>
+    <p>每次任务完成后自动记录宪法违规、用户编辑、置信度、审查分数。结构化数据收集——不是日志，是系统优化的燃料。</p>
+  </div>
+</div>
+
+<!-- Section: 宪法系统深度 -->
+<div class="section-title">
+  <h2>⚖️ <span>宪法</span>即代码</h2>
+  <p>哲学→规则→代码：三条宪法规则的可执行实现</p>
+</div>
+
+<div class="constitution-grid">
+  <div class="card const-card" style="border-color:rgba(239,68,68,0.3);">
+    <div class="const-icon">🛡️</div>
+    <h4 style="color:var(--red);">尊严 · Dignity</h4>
+    <div class="const-phil">康德 · "人是目的，不只是手段"</div>
+    <div class="const-rule">
+      <strong>决策：block（阻断）</strong><br>
+      AI必须在输出的前25%位置声明身份。<br>
+      未检测到→自动追加 [稽影 AI 参与]<br>
+      补救后二次校验。
+    </div>
+  </div>
+
+  <div class="card const-card" style="border-color:rgba(245,158,11,0.3);">
+    <div class="const-icon">🔓</div>
+    <h4 style="color:var(--gold);">自主 · Autonomy</h4>
+    <div class="const-phil">马尔库塞 · "消灭替代性想像力=消灭自由"</div>
+    <div class="const-rule">
+      <strong>决策：warn（警告）</strong><br>
+      每次输出至少提供2个替代方案。<br>
+      三层检测：关键词+列表项+段落上下文。<br>
+      未满足→自动追加替代方案模板。
+    </div>
+  </div>
+
+  <div class="card const-card" style="border-color:rgba(99,102,241,0.3);">
+    <div class="const-icon">🔍</div>
+    <h4 style="color:var(--indigo);">追问 · Questioning</h4>
+    <div class="const-phil">海德格尔+陈嘉映 · "行之于途而应于心"</div>
+    <div class="const-rule">
+      <strong>决策：warn（警告）</strong><br>
+      必须声明前提假设（≥10字符实质性内容）。<br>
+      9种正则模式检测+长度验证。<br>
+      未满足→自动追加假设声明模板。
+    </div>
+  </div>
+</div>
+
+<!-- Section: 7项质量门禁 -->
+<div class="card" style="margin-bottom:24px;">
+  <div class="card-body">
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:14px;color:var(--indigo);">🛡️ 7项预检门禁 · 对标Hermes质量体系</h3>
+    <div class="gate-list">
+      <div class="gate-item"><span class="gate-num" style="color:var(--red);">1</span><span class="gate-sev block">BLOCK</span> 宪法状态检查</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--red);">2</span><span class="gate-sev block">BLOCK</span> Agent参与度检查</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--red);">3</span><span class="gate-sev block">BLOCK</span> 内容覆盖率 ≥60%</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--red);">4</span><span class="gate-sev block">BLOCK</span> 占位符残留检测</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--gold);">5</span><span class="gate-sev warn">WARN</span> Reviewer评分 ≥3</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--gold);">6</span><span class="gate-sev warn">WARN</span> 假设声明完整性</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--gold);">7</span><span class="gate-sev warn">WARN</span> 内容去重 Jaccard >85%</div>
+    </div>
+  </div>
+</div>
+
+<!-- Section: 八阶段管道 -->
+<div class="section-title">
+  <h2>🔄 <span>多Agent</span>编排管道</h2>
+  <p>Planner→Researcher→Creator→Reviewer + Executor + ShellPolicy</p>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+  <div class="card-body">
+    <div class="pipeline-flow">
+      <div class="pipeline-step"><div class="step-num">1</div><div class="step-name">Planner</div><div class="step-tau">意图拆解·JSON输出</div></div>
+      <div class="pipeline-step"><div class="step-num">2</div><div class="step-name">Researcher</div><div class="step-tau">信息调研·来源标注</div></div>
+      <div class="pipeline-step"><div class="step-num">3</div><div class="step-name">Creator</div><div class="step-tau">内容生成·剥离假设</div></div>
+      <div class="pipeline-step"><div class="step-num">4</div><div class="step-name">Reviewer</div><div class="step-tau">评分1-5·问题定位</div></div>
+      <div class="pipeline-step"><div class="step-num">5</div><div class="step-name">Constitution</div><div class="step-tau">三规则过滤·block/warn</div></div>
+      <div class="pipeline-step"><div class="step-num">6</div><div class="step-name">Quality Gates</div><div class="step-tau">7项预检·Devil's Advocate</div></div>
+      <div class="pipeline-step"><div class="step-num">7</div><div class="step-name">Audit</div><div class="step-tau">代偿审计·证据收集</div></div>
+      <div class="pipeline-step"><div class="step-num">8</div><div class="step-name">Evolve</div><div class="step-tau">观察→学习→适应→进化</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Section: 技能库精选 -->
+<div class="section-title" id="skills">
+  <h2>🧩 <span>技能库</span>精选 · 金/银/铜</h2>
+  <p>从91个UZI金牌技能中精选12个代表性技能，按创新度和完成度分层</p>
+</div>
+
+<div class="skill-grid">
+  <div class="card skill-card"><span class="skill-tier gold-dot"></span><div class="skill-name">first-principles-reasoning</div><div class="skill-cat">🔴 核心应用</div><div class="skill-desc">第一性原理推理框架 — 马斯克+梁文峰+认识→模仿→创新→超越三层方法论</div></div>
+  <div class="card skill-card"><span class="skill-tier gold-dot"></span><div class="skill-name">tau-mad-pipeline</div><div class="skill-cat">🔴 核心应用</div><div class="skill-desc">τ-MAD 八阶段任务执行管道 — Model→Analyze→Design→Test→Harden→Integrity→Nexus→Optimize</div></div>
+  <div class="card skill-card"><span class="skill-tier gold-dot"></span><div class="skill-name">tao-theory-ops</div><div class="skill-cat">🔴 核心应用</div><div class="skill-desc">韬定律双引擎持续进化系统 — Engine A(管道约束) + Engine B(证据评测) + SHA-256审计链</div></div>
+  <div class="card skill-card"><span class="skill-tier gold-dot"></span><div class="skill-name">skill-genome-compiler</div><div class="skill-cat">🔴 核心应用</div><div class="skill-desc">技能基因编译器 v2.0 — 35个基因片段·问题光谱仪·变异引擎·框架编排原生集成</div></div>
+
+  <div class="card skill-card"><span class="skill-tier silver-dot"></span><div class="skill-name">framework-orchestrator</div><div class="skill-cat">🟡 框架集成</div><div class="skill-desc">统一框架编排器 — 单任务入口·多方法智能匹配·消耗/产出合约</div></div>
+  <div class="card skill-card"><span class="skill-tier silver-dot"></span><div class="skill-name">cognitive-decision-framework</div><div class="skill-cat">🟡 分析辅助</div><div class="skill-desc">认知决策框架 — 12心智模型·18项认知偏误保护·反事实推理</div></div>
+  <div class="card skill-card"><span class="skill-tier silver-dot"></span><div class="skill-name">unified-expert-panel</div><div class="skill-cat">🟡 分析辅助</div><div class="skill-desc">统一专家面板 — 12位AI专家+3灵感+5方法论·四委员会矩阵</div></div>
+  <div class="card skill-card"><span class="skill-tier silver-dot"></span><div class="skill-name">risk-decision-engine</div><div class="skill-cat">🟡 分析辅助</div><div class="skill-desc">风险决策引擎 — 五维评分·多方案对比·置信度加权·魔鬼代言人</div></div>
+
+  <div class="card skill-card"><span class="skill-tier bronze-dot"></span><div class="skill-name">enterprise-benchmarking</div><div class="skill-cat">🟢 专业工具</div><div class="skill-desc">企业对标分析引擎 — 72家企业·20行业·8维度评分·Plotly交互图表</div></div>
+  <div class="card skill-card"><span class="skill-tier bronze-dot"></span><div class="skill-name">financial-data-access</div><div class="skill-cat">🟢 专业工具</div><div class="skill-desc">金融数据引擎 — akshare(21K⭐)+quantstats(7.4K⭐)+Riskfolio-Lib(4.3K⭐)</div></div>
+  <div class="card skill-card"><span class="skill-tier bronze-dot"></span><div class="skill-name">video-understanding</div><div class="skill-cat">🟢 专业工具</div><div class="skill-desc">视频理解分析引擎 — 下载→抽帧→转录→多模态分析全链路</div></div>
+  <div class="card skill-card"><span class="skill-tier bronze-dot"></span><div class="skill-name">expert-mode-tool</div><div class="skill-cat">🟢 专业工具</div><div class="skill-desc">τ-MAD六层专家模式提示词引擎 — 11专家模式+深度研究·29/29测试通过</div></div>
+</div>
+
+<!-- Section: 学习研究 · 四阶段进化 -->
+<div class="section-title" id="learnings">
+  <h2>🧬 <span>认识→模仿→创新→超越</span> · 四阶段进化</h2>
+  <p>从6个技能逆向提取17层架构，到基因编译器——完整的方法论进化链</p>
+</div>
+
+<div class="phase-grid">
+  <div class="card phase-card" style="border-color:rgba(148,163,184,0.3);">
+    <div class="phase-num" style="color:var(--silver);">P1</div>
+    <div class="phase-name">认识 · Recognize</div>
+    <div class="phase-desc">逆向工程6个核心技能<br>提取17层统一架构<br>发现8个代码坏味道<br>重复率35%→目标<5%</div>
+  </div>
+  <div class="card phase-card" style="border-color:rgba(99,102,241,0.3);">
+    <div class="phase-num" style="color:var(--indigo);">P2</div>
+    <div class="phase-name">模仿 · Imitate</div>
+    <div class="phase-desc">17/17层架构全覆盖<br>忠实复刻模板<br>填补决策审计领域空白<br>建立稽影增强质量门禁</div>
+  </div>
+  <div class="card phase-card" style="border-color:rgba(245,158,11,0.3);">
+    <div class="phase-num" style="color:var(--gold);">P3</div>
+    <div class="phase-name">创新 · Innovate</div>
+    <div class="phase-desc">5项系统级创新<br>基类提取(150行→YAML)<br>统一HARD-GATE模式<br>交叉技能合约<br>自动化工具链</div>
+  </div>
+  <div class="card phase-card" style="border-color:rgba(34,197,94,0.3);">
+    <div class="phase-num" style="color:var(--green);">P4</div>
+    <div class="phase-name">超越 · Transcend</div>
+    <div class="phase-desc">范式转变：选技能→问题编译管道<br>35基因池·问题光谱仪<br>5种变异类型<br>4条进化规则<br>框架编排原生集成</div>
+  </div>
+</div>
+
+<!-- Section: 文档体系 -->
+<div class="section-title" id="docs">
+  <h2>📋 <span>14份</span>模块文档</h2>
+  <p>统一模板覆盖从App入口到工具函数的完整架构</p>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+  <div class="card-body">
+    <div class="gate-list">
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">00</span> 项目结构概览 · 架构总索引</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">01</span> App入口与路由</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">02</span> Agent系统 · 6Agent+注册表</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">03</span> 编排引擎 · 流水线调度</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">04</span> 宪法系统 · 三规则+Shell策略</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">05</span> 守护进程 · 5项后台监控</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">06</span> 上下文管理 · Token预算</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">07</span> 知识库 · TF-IDF RAG</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">08</span> 审计系统 · 代偿审计</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">09</span> 质量系统 · 5子模块56测试</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">10</span> 状态管理 · 5个Zustand Store</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">11</span> UI页面 · 6个功能页面</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">12</span> UI组件 · 3个通用组件</div>
+      <div class="gate-item"><span class="gate-num" style="color:var(--indigo);">13</span> 工具函数 · 容错与导出</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h3>🚀 让每一次AI执行都变得可验证</h3>
+  <p>
+    这不是一个AI Wrapper——这是一个有完整"骨骼和免疫系统"的知识工作平台。<br>
+    6-Agent编排 · 宪法即代码 · 7项质量门禁 · 155项测试 · Apache 2.0 开源。<br>
+    <strong>信任不是营销词——它是架构的基础。</strong>
+  </p>
+  <div class="cta-links">
+    <a href="https://github.com/Vane1981-2011/jiying" class="cta-btn primary" target="_blank">📂 GitHub 开源仓库</a>
+    <a href="#" class="cta-btn secondary" onclick="alert('📂 主应用:\n/Users/apple/ZCodeProject/repo_kouming/\n\n📚 学习研究:\n/Users/apple/ZCodeProject/learnings/\n\n🧩 技能库:\n/Users/apple/ZCodeProject/skill-showcase/\n\n📋 模块文档:\n/Users/apple/ZCodeProject/docs/稽影_模块文档/')">📁 查看源码路径</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>稽影系列 v0.2 · Apache 2.0 · GitHub: Vane1981-2011/jiying · © 2026</span>
+  <span class="footer-logo">MSxiaxia</span>
+</div>
+
+</main>
+
+<!-- Back to Top -->
+<button class="back-to-top" id="backToTop">↑</button>
+
+<!-- Scripts -->
+<script>
+(function(){
+  const backToTop = document.getElementById('backToTop');
+  const navTabs = document.querySelectorAll('.nav-tab');
+  const sectionIds = Array.from(navTabs).map(t => t.dataset.section);
+
+  // Nav scroll
+  navTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const el = document.getElementById(tab.dataset.section);
+      if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+
+  // Back to top
+  backToTop.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+
+  // Scroll handler
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const y = window.scrollY + 120;
+        backToTop.classList.toggle('visible', y > 600);
+
+        let active = sectionIds[0];
+        for (const id of sectionIds) {
+          const el = document.getElementById(id);
+          if (el && el.offsetTop <= y) active = id;
+        }
+        navTabs.forEach(t => t.classList.toggle('active', t.dataset.section === active));
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+  }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+  document.querySelectorAll('.card, .work-card, .feature-card, .skill-card, .phase-card, .const-card, .gate-item, .section-title, .hero-stat').forEach(el => {
+    el.classList.add('animate-on-scroll');
+    observer.observe(el);
+  });
+})();
+</script>
+
+</body>
+</html>
