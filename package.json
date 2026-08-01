@@ -1,7 +1,7 @@
 {
   "name": "jiying-workshop",
   "private": false,
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "稽影 — AI Agent 编排工坊。稽察审视，追影溯源。界定每一次AI参与的价值边界。",
   "type": "module",
   "main": "electron/main.cjs",
