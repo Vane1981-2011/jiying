@@ -18,6 +18,8 @@
 
 Jiying is a multi-agent knowledge-work orchestration system. Its core innovation: **Constitution-as-Code** — three philosophical rules (Kant / Marcuse / Heidegger) directly compiled into executable code that automatically blocks or warns AI outputs.
 
+> 📖 **新用户？** → [5 分钟上手指南](docs/TUTORIAL.md)
+
 ---
 
 ## ⚡ Quick Start
