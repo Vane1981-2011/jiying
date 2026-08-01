@@ -1,7 +1,7 @@
 {
   "name": "jiying-workshop",
   "private": false,
-  "version": "0.2.0",
+  "version": "0.4.0",
   "description": "稽影 — AI Agent 编排工坊。稽察审视，追影溯源。界定每一次AI参与的价值边界。",
   "type": "module",
   "main": "electron/main.cjs",
@@ -22,7 +22,8 @@
     "package:win": "npm run build && electron-builder --win",
     "lint": "oxlint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@ai-sdk/deepseek": "^3.0.7",
@@ -38,6 +39,7 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/vite": "^4.1.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.0",
@@ -48,6 +50,7 @@
     "jsdom": "^29.1.1",
     "oxlint": "^1.71.0",
     "tailwindcss": "^4.1.0",
+    "typescript": "^7.0.2",
     "vite": "^8.1.1",
     "vitest": "^3.1.0",
     "wait-on": "^8.0.0"

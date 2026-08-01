@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ethicsAmplificationCheck } from './ethicsCheck';
+import { ethicsAmplificationCheck } from './ethicsCheck.ts';
 
 describe('C8 伦理放大效应检查', () => {
   describe('利害关系人分析', () => {

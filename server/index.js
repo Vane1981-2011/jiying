@@ -25,10 +25,81 @@ import { runSelfReview } from '../src/quality/selfReview.js';
 const app = express();
 const PORT = process.env.PORT || 3456;
 
-app.use(cors());
+// ── 安全配置 ──
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : ['http://localhost:5173', 'http://localhost:3456', 'app://.'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // 允许无 origin 的请求（如 Electron、curl）
+    if (!origin) return callback(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`[Security] CORS 拒绝来源: ${origin}`);
+      callback(new Error('不允许的来源'), false);
+    }
+  },
+  methods: ['GET', 'POST'],
+  maxAge: 86400,
+}));
+
 app.use(express.json({ limit: '2mb' }));
 
-// ── 健康检查 ──
+// ── 简易速率限制（内存实现，生产环境应使用 Redis） ──
+const rateLimitStore = new Map();
+const RATE_LIMIT_WINDOW = 60_000; // 1 分钟
+const RATE_LIMIT_MAX = 60;        // 每分钟最多 60 次请求
+
+function rateLimiter(req, res, next) {
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const record = rateLimitStore.get(ip) || { count: 0, resetAt: now + RATE_LIMIT_WINDOW };
+
+  if (now > record.resetAt) {
+    record.count = 1;
+    record.resetAt = now + RATE_LIMIT_WINDOW;
+  } else {
+    record.count++;
+  }
+
+  rateLimitStore.set(ip, record);
+
+  if (record.count > RATE_LIMIT_MAX) {
+    return res.status(429).json({
+      error: '请求过于频繁，请稍后再试',
+      retryAfter: Math.ceil((record.resetAt - now) / 1000),
+    });
+  }
+
+  next();
+}
+
+// 定期清理过期记录（每 5 分钟）
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, record] of rateLimitStore) {
+    if (now > record.resetAt) rateLimitStore.delete(ip);
+  }
+}, 300_000);
+
+app.use(rateLimiter);
+
+// ── 可选 API Key 鉴权 ──
+const API_KEY = process.env.JIYING_API_KEY;
+
+function authGuard(req, res, next) {
+  if (!API_KEY) return next(); // 未配置 API Key → 跳过鉴权
+
+  const provided = req.headers['x-api-key'] || req.query.api_key;
+  if (provided !== API_KEY) {
+    return res.status(401).json({ error: '未授权：API Key 无效' });
+  }
+  next();
+}
+
+// ── 健康检查（无需鉴权） ──
 app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
@@ -40,8 +111,12 @@ app.get('/health', (_req, res) => {
   });
 });
 
-// ── 宪法检查 API ──
-app.post('/api/constitution/check', (req, res) => {
+// ── API 路由（需鉴权） ──
+const api = express.Router();
+api.use(authGuard);
+
+// 宪法检查 API
+api.post('/constitution/check', (req, res) => {
   const { text } = req.body;
   if (!text || typeof text !== 'string') {
     return res.status(400).json({ error: 'text 字段必填（字符串）' });
@@ -70,8 +145,8 @@ app.post('/api/constitution/check', (req, res) => {
   });
 });
 
-// ── 质量门禁 API ──
-app.post('/api/quality/review', (req, res) => {
+// 质量门禁 API
+api.post('/quality/review', (req, res) => {
   const { creatorResults, review } = req.body;
   if (!creatorResults || !Array.isArray(creatorResults)) {
     return res.status(400).json({ error: 'creatorResults 字段必填（数组）' });
@@ -93,11 +168,11 @@ app.post('/api/quality/review', (req, res) => {
   });
 });
 
-// ── 审计日志 API ──
+// 审计日志 API
 const auditLog = [];
 const MAX_AUDIT_LOG = 1000;
 
-app.post('/api/audit/log', (req, res) => {
+api.post('/audit/log', (req, res) => {
   const entry = {
     id: `audit_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     timestamp: new Date().toISOString(),
@@ -109,13 +184,15 @@ app.post('/api/audit/log', (req, res) => {
   res.status(201).json({ logged: true, entry_id: entry.id });
 });
 
-app.get('/api/audit/log', (req, res) => {
+api.get('/audit/log', (req, res) => {
   const limit = Math.min(parseInt(req.query.limit) || 50, 200);
   res.json({
     total: auditLog.length,
     entries: auditLog.slice(-limit).reverse(),
   });
 });
+
+app.use('/api', api);
 
 // ── 启停控制 ──
 let server = null;
@@ -125,6 +202,8 @@ export function start() {
     server = app.listen(PORT, () => {
       console.log(`🛡️  稽影 v0.4 服务端内核已启动 → http://localhost:${PORT}`);
       console.log(`  宪法规则: ${RULES.length} | 质量门禁: 7 | 审计日志上限: ${MAX_AUDIT_LOG}`);
+      console.log(`  速率限制: ${RATE_LIMIT_MAX}/分钟 | CORS: ${ALLOWED_ORIGINS.join(', ')}`);
+      if (API_KEY) console.log('  🔑 API Key 鉴权已启用');
       resolve(server);
     });
   });

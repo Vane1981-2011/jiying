@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { runSelfReview, SEVERITY } from './selfReview';
+import { runSelfReview, SEVERITY } from './selfReview.ts';
 
 const makeResult = (overrides = {}) => ({
   content: '这是一份有实际内容的产品分析报告。包含多个分析维度和详细的数据支持，覆盖市场规模、竞争格局、用户需求和技术趋势等关键方面。',

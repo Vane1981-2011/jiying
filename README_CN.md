@@ -1,37 +1,26 @@
-# 稽影
+# 稽影 (Jiying) · 多Agent信任基础设施
 
-[English](./README.md)
+<p align="center">
+  <img src="https://img.shields.io/badge/version-0.4.0-blue" alt="version">
+  <img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="license">
+  <img src="https://img.shields.io/badge/tests-155%2B%20passing-brightgreen" alt="tests">
+  <a href="https://clawhub.ai/vane1981/skills/jiying"><img src="https://img.shields.io/badge/ClawHub-145%20downloads-orange" alt="downloads"></a>
+</p>
 
-> **稽察审视，追影溯源。**
-> 你定义意图，多个 AI Agent 协作完成知识工作。
-> 同时追问你：**"这个意图值得吗？"**
+> **信任不是功能——信任是产品。**
+> 每一次AI执行都可以且必须被证明：有权、受控、可恢复、可验证、可追责。
 
----
-
-## 这是什么
-
-稽影是一个**带价值宪法的多 Agent 编排工坊**。你输入一个意图，四个 AI Agent 接力处理——同时三条宪法确保你始终是决策者，而不是被优化掉的人。
-
-```
-Planner → Researcher → Creator → Reviewer
- 拆解意图    信息调研    生成内容    质量审查
-```
-
-**每个 Agent 的输出经过三条宪法过滤：**
-
-| 宪法 | 来源 | 执行方式 |
-|:----|:-----|:---------|
-| 🔴 **尊严宪法** | 康德 | AI 必须声明身份。缺失则阻断 + 自动补全。 |
-| 🟡 **自主宪法** | 马尔库塞 | 每个输出必须提供 ≥2 个替代方案。缺失则警告 + 自动追加。 |
-| 🟢 **追问宪法** | 海德格尔 + 陈嘉映 | 每个输出必须声明前提假设。缺失则警告 + 自动追加。 |
-
-它不是代码助手（Cursor/Codex）、不是开发者框架（CrewAI/AutoGen）、不是聊天机器人（ChatGPT）。它是一个**带价值观底线的知识工作台**。
+稽影是一个多Agent知识工作编排系统。核心创新：**宪法即代码**——三条哲学规则（康德/马尔库塞/海德格尔）直接编译为可执行代码，自动阻断或警告AI输出。
 
 ---
 
-## 五分钟跑起来
+## ⚡ 快速开始
 
 ```bash
+# 通过 ClawHub 安装
+npx clawhub install jiying
+
+# 或从源码运行
 git clone https://github.com/Vane1981-2011/jiying.git
 cd jiying
 npm install
@@ -44,56 +33,76 @@ npm run dev
 
 ---
 
-## 架构
+## 🧬 核心创新
+
+| 创新 | 描述 |
+|:-----|:-----|
+| ⚖️ **宪法即代码** | 三条可执行规则：尊严（康德，阻断）、自主（马尔库塞，警告）、追问（海德格尔，警告）。违反原则的输出自动阻断或标记。 |
+| 🔗 **TEP v1.0** | 可信执行协议——Agent系统间可验证信任的开放标准。Ed25519非对称签名。防篡改。 |
+| 🛡️ **7项预检门禁** | 对标Hermes：宪法状态→Agent参与→覆盖率≥60%→占位符检测→评分≥3→假设完整→去重(Jaccard>85%)。 |
+| 🧠 **10种偏见交叉验证** | Critic+Defender双prompt架构。检测确认偏误、锚定效应、可得性启发、框架效应、过度自信、群体思维、沉没成本、近期偏差、归因错误、现状偏误。 |
+| 📊 **不确定性预算** | 6源加权量化（数据/模型/知识/假设/推理/环境）。3级阈值（LOW/MEDIUM/HIGH）自动行动（验证/复审/拒绝）。 |
+| 🔄 **断点恢复+侧效应感知重试** | DomainError 11分类。重试白名单（TIMEOUT/RATE_LIMIT/CONFLICT）。指数退避+jitter。每步Agent状态即时持久化。 |
+
+---
+
+## 🏗️ 架构
+
+```
+用户意图 → Planner → Researcher → Creator → Reviewer → 质量门禁 → 导出
+                ↑          ↑          ↑          ↑
+            宪法系统    守护进程    审计系统    演化引擎
+            (block/warn) (5项监控)  (SHA-256)  (观察→学习→适应)
+```
+
+6个Agent: Planner(τ=0.3) · Researcher(τ=0.3) · Creator(τ=0.5) · Reviewer(τ=0.2) · Executor(Shell沙箱) · ShellPolicy(4级权限)
 
 ```
 src/
-├── constitution/       # 规则引擎 + 三条宪法 + Shell 权限策略
+├── constitution/       # 规则引擎 + 三条宪法 + Shell 权限策略 + 语义验证器(L2)
 ├── guardian/           # 后台守护进程（5 项监控：尊严/自主/追问/想像力/指标漂移）
 ├── agents/             # Agent 注册表 + Planner/Creator/Researcher/Reviewer/Executor
-├── orchestrator/       # 4-Agent 编排引擎（并行执行 + 完全断点恢复）
-├── quality/            # ★ 质量保障层（v0.2 新增）
+├── orchestrator/       # 6-Agent 编排引擎（并行执行 + 完全断点恢复）
+├── quality/            # 质量保障层
 │   ├── selfReview.js   #   导出前 7 项预检门禁
 │   ├── schemas.js      #   4 角色 JSON Schema 类型校验
-│   ├── devilsAdvocate.js #  M2 批判性思维：10 种偏见检测 + 假设挖掘
+│   ├── devilsAdvocate.js # M2 批判性思维：10 种偏见检测 + 假设挖掘
 │   ├── ethicsCheck.js  #   C8 伦理放大效应：1000× 影响 + 利害关系人分析
-│   └── evolution.js    #   C9 系统自演化：从使用数据中学习改进
+│   └── evolution.js    #   C9 系统自演化：Observe→Learn→Adapt→Evolve 闭环
+├── tep/                # TEP v1.0 可信执行协议（信封生成+验证+恶意输入检测）
 ├── context/            # Token 预算控制的 Context Builder
-├── knowledge/          # TF-IDF 向量检索 RAG（从关键词搜索升级）
+├── knowledge/          # TF-IDF 向量检索 RAG
 ├── audit/              # 代偿审计收集器 + 减速点 + 周期性报告
-├── store/              # Zustand 状态管理
+├── store/              # Zustand 状态管理（5 个 Store）
 ├── pages/              # 6 个页面
 ├── components/         # 布局 + Markdown 渲染 + 错误边界
 └── utils/              # Fallback 链 + 重试机制 + Markdown 导出
 ```
 
-测试：**18 文件 / 155 测试**，全部通过（原始项目为 89 测试）。
+---
+
+## 🏆 质量
+
+- **155+ 测试通过** · A+ 96.45 复核评分
+- VirusTotal 64引擎：全部清洁 · SkillSpector: SAFE，0问题
+- 91个UZI金牌认证技能
+- DomainError 11分类 + 侧效应感知重试
 
 ---
 
-## 关键特性 (v0.2)
+## 📦 技术栈
 
-| 特性 | 状态 | 说明 |
-|:----|:---:|:------|
-| 4-Agent 流水线 | ✅ | Planner → Researcher → Creator → Reviewer |
-| 三条宪法 | ✅ ✅ | 尊严阻断 + 自主警告 + 追问警告（位置/结构/长度三重加固） |
-| 守护进程 | ✅ | 5 项后台监控 + 指标漂移检测 |
-| 代偿审计 | ✅ | AI 介入度 / 能力保留度 / 追问频率 |
-| TF-IDF 向量 RAG | ✅ | 中文分词 + 停用词过滤 + 分块重叠 |
-| 技能系统 | ✅ | 导入 Codex 格式 SKILL.md |
-| Reflexion 循环改进 | ✅ | 最多 5 轮改进 |
-| **并行执行** | ✅ | 独立子任务并发执行 |
-| **完全断点恢复** | ✅ | 每一步状态持久化，刷新不丢失 |
-| **Shell 四级权限沙箱** | ✅ | 6 类高风险永禁 + 白名单 + 完全访问模式 |
-| **M2 魔鬼代言人** | ✅ | 10 种认知偏见检测 + 假设挖掘 + 反证法 |
-| **C8 伦理放大效应** | ✅ | 1000× 放大 + 利害关系人 + 不可逆性评估 |
-| **C9 系统自演化** | ✅ | Observe→Learn→Adapt→Evolve 闭环 |
-| **Self-Review 门禁** | ✅ | 导出前 7 项质量预检 |
-| **Schema 校验** | ✅ | 4 个 Agent 角色的 JSON Schema |
-| **Fallback 链** | ✅ | withFallback + withRetry + 指数退避 |
-| **错误边界** | ✅ | React 错误边界防白屏 |
-| **减速点 UI** | ✅ | 效率过快改善时提醒暂停 |
-| Markdown 导出 | ✅ | 一键下载，可交编程 Agent 消费 |
+`React 19` `Vite 8` `Zustand` `Vercel AI SDK` `DeepSeek` `Electron` `Express` `@noble/ed25519` `Vitest`
+
+---
+
+## 🔗 链接
+
+| 资源 | URL |
+|:-----|:----|
+| 🎨 作品展示 | [vane1981-2011.github.io/jiying/portfolio](https://vane1981-2011.github.io/jiying/portfolio/) |
+| 🦞 ClawHub | [clawhub.ai/vane1981/skills/jiying](https://clawhub.ai/vane1981/skills/jiying) |
+| 📄 复核报告 | [A+ 96.45](https://vane1981-2011.github.io/jiying/portfolio/稽影系列_参赛作品_复核报告.md) |
 
 ---
 
@@ -108,9 +117,10 @@ src/
 
 ---
 
-## 许可
+## 📄 许可
 
-Apache License 2.0。详见 [LICENSE](./LICENSE) 和 [NOTICE](./NOTICE)。
+Apache 2.0 · © 2026 Vane1981
 
-Copyright 2026 Vane1981-2011。  
-原始作品 © 2026 叩鸣实验室 (zhizhi.ink)。
+---
+
+*稽察审视，追影溯源 — Examine and inspect, trace shadows to their source.*

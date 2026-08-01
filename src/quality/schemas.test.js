@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validate, safeParse, getSchema, PLANNER_SCHEMA, REVIEWER_SCHEMA } from './schemas';
+import { validate, safeParse, getSchema, PLANNER_SCHEMA, REVIEWER_SCHEMA } from './schemas.ts';
 
 describe('Schema-First 类型校验', () => {
   describe('Planner Schema', () => {

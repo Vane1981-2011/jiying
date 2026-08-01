@@ -101,6 +101,16 @@ export async function semanticConstitutionCheck(text, llmCall, options = {}) {
 
     const result = _parseJSON(rawResponse);
 
+    // JSON 解析失败 → 降级处理
+    if (result.error === 'JSON_PARSE_FAILED') {
+      return {
+        passed: true,
+        result,
+        degraded: true,
+        reason: 'L2_PARSE_ERROR',
+      };
+    }
+
     // 写入缓存
     _cache.set(cacheKey, { ...result, timestamp: Date.now() });
     // 缓存上限 200 条
@@ -172,6 +182,13 @@ export async function fullConstitutionCheck(text, l1Rules, llmCall) {
  */
 export function getL2CacheStats() {
   return { size: _cache.size, ttl: L2_CACHE_TTL };
+}
+
+/**
+ * 清空 L2 缓存（测试用）
+ */
+export function clearL2Cache() {
+  _cache.clear();
 }
 
 // ── 内部工具 ──

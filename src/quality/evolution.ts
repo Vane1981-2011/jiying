@@ -28,19 +28,15 @@ const MAX_ITEMS_LOCALSTORAGE = 500;
 // --- DB 连接（懒初始化，复用单例） ---
 
 /** @type {Promise<IDBDatabase|null>|null} */
-let dbPromise = null;
+let dbPromise: Promise<IDBDatabase | null> | null = null;
 
 /**
  * 获取（或创建）数据库连接
- * @returns {Promise<IDBDatabase|null>} null 表示 IndexedDB 不可用
+ * @returns null 表示 IndexedDB 不可用
  */
-async function getDb() {
-  // 测试/Node 环境：检查 IndexedDB 是否真正可用（避免 jsdom mock 行为不一致）
-  if (typeof indexedDB === 'undefined') {
-    return null;
-  }
+async function getDb(): Promise<IDBDatabase | null> {
   if (!dbPromise) {
-    dbPromise = openDB(DB_NAME, DB_VERSION, { [STORE_NAME]: { keyPath: 'key' } })
+    dbPromise = openDB(DB_NAME, DB_VERSION, { [STORE_NAME]: { keyPath: 'key' } } as Record<string, IDBObjectStoreParameters>)
       .catch(() => null);
   }
   return dbPromise;
@@ -50,14 +46,13 @@ async function getDb() {
 
 /**
  * 从 IndexedDB 加载历史快照（不可用时回退 localStorage）
- * @returns {Promise<Array>}
  */
-async function loadHistory() {
+async function loadHistory(): Promise<Snapshot[]> {
   try {
     const db = await getDb();
     if (db) {
-      const history = await get(db, STORE_NAME, EVOLUTION_KEY);
-      return Array.isArray(history) ? history : [];
+      const value = await get(db, STORE_NAME, EVOLUTION_KEY);
+      return Array.isArray(value) ? (value as Snapshot[]) : [];
     }
   } catch {
     // IndexedDB 读取出错，降级
@@ -65,7 +60,7 @@ async function loadHistory() {
 
   // --- localStorage 回退 ---
   try {
-    return JSON.parse(localStorage.getItem(EVOLUTION_KEY) || '[]');
+    return JSON.parse(localStorage.getItem(EVOLUTION_KEY) || '[]') as Snapshot[];
   } catch {
     return [];
   }
@@ -73,9 +68,8 @@ async function loadHistory() {
 
 /**
  * 持久化历史快照
- * @param {Array} history
  */
-async function saveHistory(history) {
+async function saveHistory(history: Snapshot[]): Promise<void> {
   try {
     const db = await getDb();
     if (db) {
@@ -96,21 +90,87 @@ async function saveHistory(history) {
 
 // --- 公开 API（全部异步） ---
 
-/**
- * 系统健康快照
- * @typedef {{ timestamp: number, constitutionViolations: number, userEdits: number, avgConfidence: number, avgReviewScore: number, skillUsage: Array<{skill, count}> }} Snapshot
- */
+/** 技能使用记录 */
+export interface SkillUsage {
+  skill: string;
+  count: number;
+}
+
+/** 系统健康快照 */
+export interface Snapshot {
+  timestamp: number;
+  constitutionViolations: number;
+  userEdits: number;
+  avgConfidence: number;
+  avgReviewScore: number;
+  taskCount: number;
+  skillUsage: SkillUsage[];
+}
+
+/** 记录快照时的指标参数 */
+export interface SnapshotMetrics {
+  constitutionViolations?: number;
+  userEdits?: number;
+  avgConfidence?: number;
+  avgReviewScore?: number;
+  taskCount?: number;
+  skillUsage?: SkillUsage[];
+}
+
+/** 趋势方向 */
+export type TrendDirection = 'improving' | 'stable' | 'declining';
+
+/** 参与趋势 */
+export type EngagementTrend = 'increasing' | 'stable' | 'decreasing';
+
+/** 系统健康状态 */
+export type HealthStatus = 'healthy' | 'needs_attention' | 'declining';
+
+/** 建议类型 */
+export type SuggestionType = 'prompt_tuning' | 'skill_recommendation' | 'constitution_tuning' | 'architecture_note';
+
+/** 改进建议 */
+export interface EvolutionSuggestion {
+  type: SuggestionType;
+  priority: 'high' | 'medium' | 'low';
+  message: string;
+}
+
+/** 演化趋势 */
+export interface EvolutionTrends {
+  constitutionTrend: TrendDirection;
+  userEngagementTrend: EngagementTrend;
+  qualityTrend: TrendDirection;
+}
+
+/** 演化分析结果 */
+export interface EvolutionAnalysis {
+  health: HealthStatus;
+  trends: EvolutionTrends;
+  suggestions: EvolutionSuggestion[];
+  antiFragilityScore: number; // 1-10
+}
+
+/** 演化历史摘要 */
+export interface EvolutionSummary {
+  snapshots: number;
+  timeSpanDays: number;
+  firstDate: string;
+  lastDate: string;
+  avgViolationsPerTask: string;
+  avgQualityScore: string;
+  antiFragilityScore: number;
+}
 
 /**
  * 记录一次执行快照
  *
- * @param {object} metrics
- * @returns {Promise<void>}
+ * @param metrics - 快照指标
  */
-export async function recordSnapshot(metrics) {
+export async function recordSnapshot(metrics: SnapshotMetrics): Promise<void> {
   try {
     const history = await loadHistory();
-    const snapshot = {
+    const snapshot: Snapshot = {
       timestamp: Date.now(),
       constitutionViolations: metrics.constitutionViolations || 0,
       userEdits: metrics.userEdits || 0,
@@ -130,21 +190,10 @@ export async function recordSnapshot(metrics) {
  * 分析演化趋势，生成改进建议
  *
  * 对标 MAD-THINK L6 反馈闭环的"校准"阶段
- *
- * @returns {Promise<{
- *   health: 'healthy'|'needs_attention'|'declining',
- *   trends: {
- *     constitutionTrend: 'improving'|'stable'|'declining',
- *     userEngagementTrend: 'increasing'|'stable'|'decreasing',
- *     qualityTrend: 'improving'|'stable'|'declining',
- *   },
- *   suggestions: Array<{type: 'prompt_tuning'|'skill_recommendation'|'constitution_tuning'|'architecture_note', priority: 'high'|'medium'|'low', message: string}>,
- *   antiFragilityScore: number, // 1-10
- * }>}
  */
-export async function analyzeEvolution() {
+export async function analyzeEvolution(): Promise<EvolutionAnalysis> {
   const history = await loadHistory();
-  const suggestions = [];
+  const suggestions: EvolutionSuggestion[] = [];
 
   if (history.length < 3) {
     return {
@@ -161,24 +210,24 @@ export async function analyzeEvolution() {
   // 1. 宪法违反趋势
   const recentViolations = recent.reduce((sum, s) => sum + s.constitutionViolations, 0) / recent.length;
   const olderViolations = older.length > 0 ? older.reduce((sum, s) => sum + s.constitutionViolations, 0) / older.length : recentViolations;
-  const constitutionTrend = recentViolations < olderViolations * 0.8 ? 'improving' :
+  const constitutionTrend: TrendDirection = recentViolations < olderViolations * 0.8 ? 'improving' :
     recentViolations > olderViolations * 1.2 ? 'declining' : 'stable';
 
   // 2. 用户参与趋势（自己做 + 反驳）
   const recentEdits = recent.reduce((sum, s) => sum + (s.userEdits || 0), 0) / recent.length;
   const olderEdits = older.length > 0 ? older.reduce((sum, s) => sum + (s.userEdits || 0), 0) / older.length : recentEdits;
-  const userEngagementTrend = recentEdits > olderEdits * 1.2 ? 'increasing' :
+  const userEngagementTrend: EngagementTrend = recentEdits > olderEdits * 1.2 ? 'increasing' :
     recentEdits < olderEdits * 0.8 ? 'decreasing' : 'stable';
 
   // 3. 质量趋势
   const recentQuality = recent.reduce((sum, s) => sum + s.avgReviewScore, 0) / recent.length;
   const olderQuality = older.length > 0 ? older.reduce((sum, s) => sum + s.avgReviewScore, 0) / older.length : recentQuality;
-  const qualityTrend = recentQuality > olderQuality * 1.1 ? 'improving' :
+  const qualityTrend: TrendDirection = recentQuality > olderQuality * 1.1 ? 'improving' :
     recentQuality < olderQuality * 0.9 ? 'declining' : 'stable';
 
   // === 生成改进建议 ===
 
-  // 宪法提高频率过高 → 建议调优 prompt
+  // 宪法违反频率过高 → 建议调优 prompt
   if (constitutionTrend === 'declining') {
     suggestions.push({
       type: 'constitution_tuning',
@@ -212,7 +261,7 @@ export async function analyzeEvolution() {
   }
 
   // 技能使用分析
-  const skillUsageMap = {};
+  const skillUsageMap: Record<string, number> = {};
   for (const snap of recent) {
     if (snap.skillUsage) {
       for (const su of snap.skillUsage) {
@@ -221,7 +270,7 @@ export async function analyzeEvolution() {
     }
   }
   const unusedSkills = Object.entries(skillUsageMap)
-    .filter(([_, count]) => count === 0)
+    .filter(([_skill, count]) => count === 0)
     .map(([skill]) => skill);
   if (unusedSkills.length > 2) {
     suggestions.push({
@@ -232,7 +281,7 @@ export async function analyzeEvolution() {
   }
 
   // 整体健康度
-  const health = constitutionTrend === 'declining' || qualityTrend === 'declining' ? 'needs_attention' :
+  const health: HealthStatus = constitutionTrend === 'declining' || qualityTrend === 'declining' ? 'needs_attention' :
     recentViolations > 3 ? 'needs_attention' : 'healthy';
 
   // 抗脆弱性评分
@@ -252,15 +301,13 @@ export async function analyzeEvolution() {
 
 /**
  * 获取演化历史摘要（用于审计面板）
- *
- * @returns {Promise<object|null>}
  */
-export async function getEvolutionSummary() {
+export async function getEvolutionSummary(): Promise<EvolutionSummary | null> {
   const history = await loadHistory();
   if (history.length === 0) return null;
 
-  const first = history[0];
-  const last = history[history.length - 1];
+  const first = history[0]!;
+  const last = history[history.length - 1]!;
   const timeSpan = Math.round((last.timestamp - first.timestamp) / (24 * 3600 * 1000));
 
   const { antiFragilityScore } = await analyzeEvolution();
@@ -279,10 +326,8 @@ export async function getEvolutionSummary() {
 /**
  * 清空演化数据（IndexedDB + localStorage）
  * 供测试和重置场景使用
- *
- * @returns {Promise<void>}
  */
-export async function resetEvolution() {
+export async function resetEvolution(): Promise<void> {
   try {
     const db = await getDb();
     if (db) {

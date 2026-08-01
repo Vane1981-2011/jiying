@@ -68,11 +68,12 @@ export function generateEnvelope({
   }
 
   const timestamp = new Date().toISOString();
+  // 先构建不含 audit_signature 的信封（避免 TDZ：envelope 在其自身初始化器中引用自己）
   const envelope = {
     tep_version: TEP_VERSION,
     task: { id: taskId, description: taskDescription, created_at: timestamp },
     authorization: { principal, permissions, granted_at: timestamp },
-    execution_profile: { model, timestamp, runtime: '稽影 v0.2.0' },
+    execution_profile: { model, timestamp, runtime: '稽影 v0.4.0' },
     policy_decisions: [],
     action_receipts: actionReceipts,
     evidence_bundle: { items: evidence, collected_at: timestamp },
@@ -80,10 +81,12 @@ export function generateEnvelope({
       overall_score: Math.max(1, Math.min(5, overallScore)),
       reviewed_at: timestamp,
     },
-    audit_signature: signingKey
-      ? { algorithm: 'HMAC-SHA256', signature: _sign(envelope, signingKey), signed_at: timestamp }
-      : { algorithm: 'none', signature: 'unsigned', warning: 'TEP_DEGRADED_NO_SIGNING_KEY' },
   };
+
+  // 签名在信封构建完成后单独附加（避免 TDZ ReferenceError）
+  envelope.audit_signature = signingKey
+    ? { algorithm: 'HMAC-SHA256', signature: _sign(envelope, signingKey), signed_at: timestamp }
+    : { algorithm: 'none', signature: 'unsigned', warning: 'TEP_DEGRADED_NO_SIGNING_KEY' };
 
   return { envelope, generated_at: timestamp };
 }
@@ -152,20 +155,28 @@ export function verifyEnvelope(envelope) {
  */
 export function detectMaliciousInput(envelope) {
   const threats = [];
-  const serialized = JSON.stringify(envelope);
-
-  // JSON 注入检测
-  if (serialized.includes('__proto__') || serialized.includes('constructor.prototype')) {
-    threats.push('检测到原型污染尝试 (__proto__/constructor.prototype)');
-  }
-
-  // 超长字段检测
   const MAX_FIELD_LENGTH = 10000;
-  for (const [key, value] of Object.entries(envelope)) {
-    if (typeof value === 'string' && value.length > MAX_FIELD_LENGTH) {
-      threats.push(`字段 ${key} 长度 ${value.length} 超过上限 ${MAX_FIELD_LENGTH}`);
+
+  // 原型污染检测 — 检查对象的实际原型链（__proto__ 作为对象字面量键时会改变原型而非创建自有属性）
+  const proto = Object.getPrototypeOf(envelope);
+  if (proto !== Object.prototype && proto !== null) {
+    const protoKeys = Object.keys(proto);
+    if (protoKeys.length > 0) {
+      threats.push(`检测到原型污染尝试 (非标准原型: ${protoKeys.join(', ')})`);
     }
   }
+
+  // 同时检查自有属性中是否包含危险键名
+  const ownKeys = new Set();
+  _collectKeys(envelope, ownKeys);
+  for (const key of ownKeys) {
+    if (key === 'constructor' || key === 'prototype') {
+      threats.push(`检测到原型污染尝试 (危险键: ${key})`);
+    }
+  }
+
+  // 超长字段检测 — 递归遍历嵌套字符串
+  _checkFieldLengths(envelope, '', MAX_FIELD_LENGTH, threats);
 
   // 嵌套深度检测
   try {
@@ -176,6 +187,30 @@ export function detectMaliciousInput(envelope) {
   } catch { /* ignore */ }
 
   return { safe: threats.length === 0, threats };
+}
+
+/** 递归收集对象所有键名（检测构造函数/原型污染用） */
+function _collectKeys(obj, seen, depth = 0) {
+  if (depth > 20 || !obj || typeof obj !== 'object') return;
+  for (const key of Object.keys(obj)) {
+    seen.add(key);
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      _collectKeys(obj[key], seen, depth + 1);
+    }
+  }
+}
+
+/** 递归检查所有嵌套字符串字段的长度 */
+function _checkFieldLengths(obj, path, maxLen, threats) {
+  if (!obj || typeof obj !== 'object') return;
+  for (const [key, value] of Object.entries(obj)) {
+    const fullPath = path ? `${path}.${key}` : key;
+    if (typeof value === 'string' && value.length > maxLen) {
+      threats.push(`字段 ${fullPath} 长度 ${value.length} 超过上限 ${maxLen}`);
+    } else if (typeof value === 'object' && value !== null) {
+      _checkFieldLengths(value, fullPath, maxLen, threats);
+    }
+  }
 }
 
 /**

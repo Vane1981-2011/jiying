@@ -27,7 +27,7 @@ describe('TEP Envelope Generation', () => {
     expect(envelope.task.id).toBe('task-001');
     expect(envelope.authorization.principal).toBe('user@example.com');
     expect(envelope.quality_attestation.overall_score).toBe(4);
-    expect(envelope.execution_profile.runtime).toBe('稽影 v0.2.0');
+    expect(envelope.execution_profile.runtime).toBe('稽影 v0.4.0');
   });
 
   it('【正常】带签名密钥时生成 HMAC 签名', () => {

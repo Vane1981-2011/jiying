@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { challenge, COGNITIVE_BIASES } from './devilsAdvocate';
+import { challenge, COGNITIVE_BIASES } from './devilsAdvocate.ts';
 
 describe('魔鬼代言人 M2 批判性思维', () => {
   describe('基础功能', () => {

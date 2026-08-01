@@ -2,7 +2,7 @@
  * 语义宪法验证器 · 测试套件
  */
 import { describe, it, expect, vi } from 'vitest';
-import { semanticConstitutionCheck, fullConstitutionCheck, getL2CacheStats, L2_TEST_CASES } from './semanticVerifier.js';
+import { semanticConstitutionCheck, fullConstitutionCheck, getL2CacheStats, clearL2Cache, L2_TEST_CASES } from './semanticVerifier.js';
 import { RULES } from './rules.js';
 
 // 模拟 LLM 调用
@@ -51,6 +51,7 @@ describe('Semantic Constitution Verifier (L2)', () => {
   });
 
   it('【缓存】相同文本命中缓存', async () => {
+    clearL2Cache(); // 清空之前测试可能留下的缓存
     const llm = mockLlm({ overall: 'genuine', confidence: 0.9 });
     const text = L2_TEST_CASES.genuine;
     
