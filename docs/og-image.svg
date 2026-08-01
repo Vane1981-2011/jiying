@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0b1120"/>
+      <stop offset="40%" style="stop-color:#1a1545"/>
+      <stop offset="70%" style="stop-color:#2d1b69"/>
+      <stop offset="100%" style="stop-color:#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#fbbf24"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Grid pattern -->
+  <g opacity="0.06">
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5"/>
+    </pattern>
+    <rect width="1200" height="630" fill="url(#grid)"/>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="160" text-anchor="middle" font-family="system-ui,sans-serif" font-size="64" font-weight="900" fill="white" letter-spacing="-1">
+    稽影<tspan fill="url(#gold)">·</tspan>Jiying
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="220" text-anchor="middle" font-family="system-ui,sans-serif" font-size="22" fill="rgba(255,255,255,0.7)">
+    信任不是功能——<tspan font-weight="700" fill="#fbbf24">信任是产品</tspan>
+  </text>
+
+  <!-- Pipeline -->
+  <g transform="translate(60, 290)">
+    <!-- Planner -->
+    <rect x="0" y="0" width="130" height="56" rx="10" fill="rgba(99,102,241,0.18)" stroke="rgba(99,102,241,0.4)" stroke-width="1.5"/>
+    <text x="65" y="24" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#a5b4fc">🧠 Planner</text>
+    <text x="65" y="42" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(165,180,252,0.6)">意图拆解</text>
+
+    <!-- Arrow -->
+    <text x="140" y="34" font-size="18" fill="rgba(255,255,255,0.3)">→</text>
+
+    <!-- Researcher -->
+    <rect x="165" y="0" width="130" height="56" rx="10" fill="rgba(99,102,241,0.12)" stroke="rgba(99,102,241,0.25)" stroke-width="1"/>
+    <text x="230" y="24" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#a5b4fc">🔍 Researcher</text>
+    <text x="230" y="42" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(165,180,252,0.6)">信息调研</text>
+
+    <!-- Arrow -->
+    <text x="305" y="34" font-size="18" fill="rgba(255,255,255,0.3)">→</text>
+
+    <!-- Creator -->
+    <rect x="330" y="0" width="130" height="56" rx="10" fill="rgba(139,92,246,0.15)" stroke="rgba(139,92,246,0.3)" stroke-width="1"/>
+    <text x="395" y="24" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#c4b5fd">✍️ Creator</text>
+    <text x="395" y="42" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(196,181,253,0.6)">内容生成</text>
+
+    <!-- Arrow -->
+    <text x="470" y="34" font-size="18" fill="rgba(255,255,255,0.3)">→</text>
+
+    <!-- Reviewer -->
+    <rect x="495" y="0" width="130" height="56" rx="10" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.25)" stroke-width="1"/>
+    <text x="560" y="24" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#fbbf24">✅ Reviewer</text>
+    <text x="560" y="42" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(251,191,36,0.6)">质量审查</text>
+
+    <!-- Arrow -->
+    <text x="635" y="34" font-size="18" fill="rgba(255,255,255,0.3)">→</text>
+
+    <!-- Quality -->
+    <rect x="660" y="0" width="140" height="56" rx="10" fill="rgba(34,197,94,0.12)" stroke="rgba(34,197,94,0.25)" stroke-width="1"/>
+    <text x="730" y="24" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#4ade80">🛡️ Quality Gates</text>
+    <text x="730" y="42" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(74,222,128,0.6)">7项预检门禁</text>
+
+    <!-- Arrow -->
+    <text x="810" y="34" font-size="18" fill="rgba(255,255,255,0.3)">→</text>
+
+    <!-- Export -->
+    <rect x="835" y="0" width="130" height="56" rx="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+    <text x="900" y="24" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="rgba(255,255,255,0.8)">📤 Export</text>
+    <text x="900" y="42" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.4)">交付</text>
+  </g>
+
+  <!-- Bottom layer: Constitution + Guardian -->
+  <g transform="translate(100, 385)">
+    <rect x="0" y="0" width="1000" height="48" rx="8" fill="rgba(239,68,68,0.06)" stroke="rgba(239,68,68,0.15)" stroke-width="1"/>
+    <text x="500" y="18" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="rgba(248,113,113,0.7)">⚖️ 宪法即代码</text>
+    <text x="500" y="36" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(248,113,113,0.4)">康德·尊严(阻断) / 马尔库塞·自主(警告) / 海德格尔·追问(警告)</text>
+  </g>
+
+  <g transform="translate(100, 443)">
+    <rect x="0" y="0" width="1000" height="48" rx="8" fill="rgba(99,102,241,0.06)" stroke="rgba(99,102,241,0.15)" stroke-width="1"/>
+    <text x="500" y="18" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="rgba(129,140,248,0.7)">🛡️ TEP v1.0 可信执行协议 · Ed25519 · 7项质量门禁 · 10种认知偏见验证 · 不确定性预算 · 断点恢复</text>
+    <text x="500" y="36" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="rgba(129,140,248,0.4)">178+ 测试通过 · A+ 96.45 复核 · VirusTotal 全绿 · SkillSpector SAFE</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="600" y="560" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="rgba(255,255,255,0.3)">
+    6-Agent 编排 · Apache 2.0 开源 · github.com/Vane1981-2011/jiying
+  </text>
+
+  <!-- Corner accent -->
+  <circle cx="1150" cy="80" r="180" fill="rgba(245,158,11,0.04)"/>
+  <circle cx="50" cy="580" r="120" fill="rgba(99,102,241,0.04)"/>
+</svg>

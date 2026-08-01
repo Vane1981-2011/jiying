@@ -1,10 +1,16 @@
 # 稽影 (Jiying) · Multi-Agent Trust Infrastructure
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.4.0-blue" alt="version">
+  <img src="docs/banner.png" alt="稽影 Jiying" width="100%">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/version-0.4.1-blue" alt="version">
   <img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="license">
-  <img src="https://img.shields.io/badge/tests-155%2B%20passing-brightgreen" alt="tests">
-  <a href="https://clawhub.ai/vane1981/skills/jiying"><img src="https://img.shields.io/badge/ClawHub-145%20downloads-orange" alt="downloads"></a>
+  <img src="https://img.shields.io/badge/tests-178%20passed-brightgreen" alt="tests">
+  <a href="https://github.com/Vane1981-2011/jiying/actions"><img src="https://img.shields.io/badge/CI-passing-brightgreen" alt="CI"></a>
+  <a href="https://clawhub.ai/vane1981/skills/jiying"><img src="https://img.shields.io/badge/ClawHub-217%20downloads-orange" alt="downloads"></a>
+  <img src="https://img.shields.io/badge/review-A%2B%2096.45-gold" alt="review">
 </p>
 
 > **Trust is not a feature — trust is the product.**
