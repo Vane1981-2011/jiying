@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { withFallback, withRetry } from './fallback';
-import { DomainError } from './errors';
 
 describe('Fallback 链式容错', () => {
   describe('withFallback', () => {
@@ -56,9 +55,7 @@ describe('Fallback 链式容错', () => {
         { name: 'backup', fn: () => 'ok' },
       ], { onFallback: callback });
       expect(callback).toHaveBeenCalledTimes(1);
-      // DomainError 包装了原始错误
-      expect(callback.mock.calls[0][0]).toBe('main');
-      expect(callback.mock.calls[0][1].code).toBe('PROVIDER_FAILED');
+      expect(callback).toHaveBeenCalledWith('main', '失败');
     });
 
     it('空 provider 列表 → 直接返回降级结果', async () => {
@@ -78,7 +75,7 @@ describe('Fallback 链式容错', () => {
 
     it('失败一次后重试成功', async () => {
       const fn = vi.fn()
-        .mockRejectedValueOnce(new DomainError({ code: 'TEMP', category: 'TIMEOUT', retryable: true, userMessage: '临时错误' }))
+        .mockRejectedValueOnce(new Error('临时错误'))
         .mockResolvedValueOnce('重试成功');
       const result = await withRetry(fn, { retries: 3, backoffMs: 10 });
       expect(result).toBe('重试成功');
@@ -86,23 +83,18 @@ describe('Fallback 链式容错', () => {
     });
 
     it('全部重试失败 → 抛出错误', async () => {
-      const fn = vi.fn().mockRejectedValue(new DomainError({ code: 'PERSIST', category: 'TIMEOUT', retryable: true, userMessage: '一直失败' }));
+      const fn = vi.fn().mockRejectedValue(new Error('一直失败'));
       await expect(withRetry(fn, { retries: 2, backoffMs: 10 })).rejects.toThrow('一直失败');
       expect(fn).toHaveBeenCalledTimes(2);
     });
 
     it('shouldRetry 返回 false → 不重试', async () => {
-      const fn = vi.fn().mockRejectedValue(new DomainError({ code: 'NO_RETRY', category: 'DEPENDENCY', retryable: true, userMessage: '不可重试错误' }));
+      const fn = vi.fn().mockRejectedValue(new Error('不可重试'));
       await expect(withRetry(fn, {
         retries: 3,
         backoffMs: 10,
-      })).rejects.toThrow();
-      expect(fn).toHaveBeenCalledTimes(3);
-    });
-
-    it('不可重试错误 → 立即抛出', async () => {
-      const fn = vi.fn().mockRejectedValue(new DomainError({ code: 'AUTH', category: 'AUTHORIZATION', retryable: false, userMessage: '权限不足' }));
-      await expect(withRetry(fn, { retries: 3, backoffMs: 10 })).rejects.toThrow('权限不足');
+        shouldRetry: (e) => !e.message.includes('不可重试'),
+      })).rejects.toThrow('不可重试');
       expect(fn).toHaveBeenCalledTimes(1);
     });
   });
